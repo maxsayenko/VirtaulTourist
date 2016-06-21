@@ -13,30 +13,24 @@ class MapViewController: UIViewController {
     @IBOutlet var map: MKMapView!
     
     override func viewDidLoad() {
-        print("didLoad")
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: "addAnnotation:")
-        longPressGesture.minimumPressDuration = 2.0
         map.addGestureRecognizer(longPressGesture)
         map.delegate = self
     }
     
     override func viewWillAppear(animated: Bool) {
-        print("willAppear")
         navigationItem.title = "Virtual Tourist"
         for annotation in map.selectedAnnotations {
-            print(annotation)
             map.deselectAnnotation(annotation, animated: false)
         }
     }
     
     func addAnnotation(gestureRecognizer:UIGestureRecognizer) {
-        print(gestureRecognizer.state)
         if (gestureRecognizer.state == UIGestureRecognizerState.Began) {
             let touchPoint = gestureRecognizer.locationInView(map)
             let newCoordinates = map.convertPoint(touchPoint, toCoordinateFromView: map)
             let annotation = MKPointAnnotation()
             annotation.coordinate = newCoordinates
-            print(annotation)
             map.addAnnotation(annotation)
 
             
@@ -71,7 +65,6 @@ class MapViewController: UIViewController {
         {
             navigationItem.title = "OK"
             if let _ = segue.destinationViewController as? CollectionViewController {
-
             }
         }
     }
@@ -83,7 +76,6 @@ extension MapViewController: MKMapViewDelegate {
         if annotation is MKUserLocation {
             return nil
         }
-        print("Adding ..")
         let reuseId = "pin"
         var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
         if (pinView == nil) {
@@ -105,10 +97,7 @@ extension MapViewController: MKMapViewDelegate {
     
     //Selecting annotation
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-        print("Tap")
         self.performSegueWithIdentifier("collectionSegue", sender: self)
-//        let collectionViewController = self.storyboard?.instantiateViewControllerWithIdentifier("collectionViewController") as? CollectionViewController
-//        self.navigationController?.pushViewController(collectionViewController!, animated: true)
     }
 }
 

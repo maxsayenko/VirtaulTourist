@@ -41,7 +41,7 @@
             </objects>
             <point key="canvasLocation" x="538" y="137"/>
         </scene>
-        <!--Title-->
+        <!--Collection View Controller-->
         <scene sceneID="wBL-t3-Gzv">
             <objects>
                 <viewController storyboardIdentifier="collectionViewController" id="Bqu-iW-d4q" customClass="CollectionViewController" customModule="VirtualTourist" sceneMemberID="viewController">
@@ -55,7 +55,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Title" id="rCg-gZ-8A8">
+                    <navigationItem key="navigationItem" id="rCg-gZ-8A8">
                         <barButtonItem key="backBarButtonItem" title="OK" id="Mh3-IM-2uv"/>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
