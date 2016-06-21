@@ -10,5 +10,6 @@ import UIKit
 import MapKit
 
 class CollectionViewController: UIViewController {
-
+    override func viewDidLoad() {
+    }
 }

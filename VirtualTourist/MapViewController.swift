@@ -25,6 +25,10 @@ class MapViewController: UIViewController {
         }
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        navigationItem.title = "OK"
+    }
+    
     func addAnnotation(gestureRecognizer:UIGestureRecognizer) {
         if (gestureRecognizer.state == UIGestureRecognizerState.Began) {
             let touchPoint = gestureRecognizer.locationInView(map)
@@ -63,7 +67,6 @@ class MapViewController: UIViewController {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "collectionSegue")
         {
-            navigationItem.title = "OK"
             if let _ = segue.destinationViewController as? CollectionViewController {
             }
         }
