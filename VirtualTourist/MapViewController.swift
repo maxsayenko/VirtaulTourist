@@ -13,13 +13,24 @@ class MapViewController: UIViewController {
     @IBOutlet var map: MKMapView!
     
     override func viewDidLoad() {
+        print("didLoad")
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: "addAnnotation:")
         longPressGesture.minimumPressDuration = 2.0
         map.addGestureRecognizer(longPressGesture)
         map.delegate = self
     }
     
-    func addAnnotation(gestureRecognizer:UIGestureRecognizer){
+    override func viewWillAppear(animated: Bool) {
+        print("willAppear")
+        navigationItem.title = "Virtual Tourist"
+        for annotation in map.selectedAnnotations {
+            print(annotation)
+            map.deselectAnnotation(annotation, animated: false)
+        }
+    }
+    
+    func addAnnotation(gestureRecognizer:UIGestureRecognizer) {
+        print(gestureRecognizer.state)
         if (gestureRecognizer.state == UIGestureRecognizerState.Began) {
             let touchPoint = gestureRecognizer.locationInView(map)
             let newCoordinates = map.convertPoint(touchPoint, toCoordinateFromView: map)
@@ -54,6 +65,16 @@ class MapViewController: UIViewController {
 //            })
         }
     }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if (segue.identifier == "collectionSegue")
+        {
+            navigationItem.title = "OK"
+            if let _ = segue.destinationViewController as? CollectionViewController {
+
+            }
+        }
+    }
 }
 
 extension MapViewController: MKMapViewDelegate {
@@ -85,6 +106,9 @@ extension MapViewController: MKMapViewDelegate {
     //Selecting annotation
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         print("Tap")
+        self.performSegueWithIdentifier("collectionSegue", sender: self)
+//        let collectionViewController = self.storyboard?.instantiateViewControllerWithIdentifier("collectionViewController") as? CollectionViewController
+//        self.navigationController?.pushViewController(collectionViewController!, animated: true)
     }
 }
 
