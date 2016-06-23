@@ -89,7 +89,7 @@
                                 </constraints>
                                 <state key="normal" title="New Collection"/>
                             </button>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="f5t-54-AAA">
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" zoomEnabled="NO" scrollEnabled="NO" rotateEnabled="NO" pitchEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f5t-54-AAA">
                                 <rect key="frame" x="0.0" y="64" width="600" height="120"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="200" id="B5Y-EV-shZ"/>
@@ -132,6 +132,9 @@
                         <barButtonItem key="backBarButtonItem" title="OK" id="Mh3-IM-2uv"/>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="map" destination="f5t-54-AAA" id="giu-36-NGV"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="D93-LX-h7H" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

@@ -67,7 +67,8 @@ class MapViewController: UIViewController {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "collectionSegue")
         {
-            if let _ = segue.destinationViewController as? CollectionViewController {
+            if let ctrl = segue.destinationViewController as? CollectionViewController {
+                ctrl.mapPinAnnotation = sender as? MKAnnotation
             }
         }
     }
@@ -100,7 +101,7 @@ extension MapViewController: MKMapViewDelegate {
     
     //Selecting annotation
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-        self.performSegueWithIdentifier("collectionSegue", sender: self)
+        performSegueWithIdentifier("collectionSegue", sender: view.annotation)
     }
 }
 

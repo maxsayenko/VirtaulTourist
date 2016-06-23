@@ -10,6 +10,17 @@ import UIKit
 import MapKit
 
 class CollectionViewController: UIViewController {
+    var mapPinAnnotation:MKAnnotation?
+    
+    @IBOutlet var map: MKMapView!
+    
     override func viewDidLoad() {
+        if let annotation = mapPinAnnotation {
+            map.addAnnotation(annotation)
+            let span = MKCoordinateSpanMake(0.075, 0.075)
+            let region = MKCoordinateRegion(center: annotation.coordinate, span: span)
+            map.setRegion(region, animated: true)
+        }
+
     }
 }
