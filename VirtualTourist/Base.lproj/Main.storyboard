@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
@@ -54,41 +55,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="FU3-L1-vVk">
-                                <rect key="frame" x="0.0" y="184" width="600" height="326"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="314" id="4S9-66-k2j"/>
-                                </constraints>
-                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="3vZ-79-CSs">
-                                    <size key="itemSize" width="50" height="50"/>
-                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                </collectionViewFlowLayout>
-                                <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gLc-EX-2F2">
-                                        <rect key="frame" x="0.0" y="64" width="50" height="50"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        </view>
-                                    </collectionViewCell>
-                                </cells>
-                                <variation key="default">
-                                    <mask key="constraints">
-                                        <exclude reference="4S9-66-k2j"/>
-                                    </mask>
-                                </variation>
-                            </collectionView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A3g-BI-bf5">
-                                <rect key="frame" x="237" y="518" width="127" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="127" id="8X9-UN-eaf"/>
-                                </constraints>
-                                <state key="normal" title="New Collection"/>
-                            </button>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" zoomEnabled="NO" scrollEnabled="NO" rotateEnabled="NO" pitchEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f5t-54-AAA">
                                 <rect key="frame" x="0.0" y="64" width="600" height="120"/>
                                 <constraints>
@@ -100,10 +66,73 @@
                                     </mask>
                                 </variation>
                             </mapView>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="FU3-L1-vVk">
+                                <rect key="frame" x="0.0" y="184" width="600" height="416"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="314" id="4S9-66-k2j"/>
+                                </constraints>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="3vZ-79-CSs">
+                                    <size key="itemSize" width="69" height="63"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="50" height="50"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="collectionCell" id="gLc-EX-2F2" customClass="PictureCell" customModule="VirtualTourist" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="64" width="69" height="63"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="69" height="63"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="4O8-pd-43C">
+                                                    <rect key="frame" x="0.0" y="0.0" width="69" height="63"/>
+                                                </imageView>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <constraints>
+                                            <constraint firstItem="4O8-pd-43C" firstAttribute="top" secondItem="gLc-EX-2F2" secondAttribute="top" id="6pH-79-Ren"/>
+                                            <constraint firstAttribute="trailing" secondItem="4O8-pd-43C" secondAttribute="trailing" id="Tbg-8y-Xvx"/>
+                                            <constraint firstItem="4O8-pd-43C" firstAttribute="leading" secondItem="gLc-EX-2F2" secondAttribute="leading" id="sb5-OI-fJP"/>
+                                            <constraint firstAttribute="bottom" secondItem="4O8-pd-43C" secondAttribute="bottom" id="z7b-9k-IBB"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="picture" destination="4O8-pd-43C" id="kfv-yK-P11"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                                <collectionReusableView key="sectionFooterView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="1OK-nM-tYC">
+                                    <rect key="frame" x="0.0" y="127" width="600" height="50"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A3g-BI-bf5">
+                                            <rect key="frame" x="237" y="8" width="127" height="30"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="127" id="8X9-UN-eaf"/>
+                                            </constraints>
+                                            <state key="normal" title="New Collection"/>
+                                        </button>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="A3g-BI-bf5" firstAttribute="centerX" secondItem="1OK-nM-tYC" secondAttribute="centerX" id="hp0-ue-7Aw"/>
+                                        <constraint firstItem="A3g-BI-bf5" firstAttribute="top" secondItem="1OK-nM-tYC" secondAttribute="topMargin" id="yiL-fH-lL0"/>
+                                    </constraints>
+                                </collectionReusableView>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="4S9-66-k2j"/>
+                                    </mask>
+                                </variation>
+                                <connections>
+                                    <outlet property="dataSource" destination="Bqu-iW-d4q" id="ZWR-Qo-bOw"/>
+                                    <outlet property="delegate" destination="Bqu-iW-d4q" id="AVW-Mq-7WY"/>
+                                </connections>
+                            </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="tUu-Yh-nE7" firstAttribute="top" secondItem="A3g-BI-bf5" secondAttribute="bottom" constant="8" symbolic="YES" id="3KG-d9-Hlg"/>
                             <constraint firstItem="tUu-Yh-nE7" firstAttribute="top" secondItem="f5t-54-AAA" secondAttribute="bottom" constant="360" id="3od-39-z9d"/>
                             <constraint firstItem="FU3-L1-vVk" firstAttribute="leading" secondItem="f5t-54-AAA" secondAttribute="leading" id="4Lu-u9-ZDo"/>
                             <constraint firstAttribute="trailing" secondItem="f5t-54-AAA" secondAttribute="trailing" id="8h9-zB-Iu5"/>
@@ -111,12 +140,11 @@
                             <constraint firstItem="FU3-L1-vVk" firstAttribute="trailing" secondItem="f5t-54-AAA" secondAttribute="trailing" id="IZQ-ow-ogX"/>
                             <constraint firstItem="FU3-L1-vVk" firstAttribute="top" secondItem="f5t-54-AAA" secondAttribute="bottom" id="Mp5-RA-TGi"/>
                             <constraint firstItem="FU3-L1-vVk" firstAttribute="leading" secondItem="f5t-54-AAA" secondAttribute="leading" id="Nc1-pV-Zj1"/>
-                            <constraint firstItem="A3g-BI-bf5" firstAttribute="centerX" secondItem="FU3-L1-vVk" secondAttribute="centerX" id="PsS-dw-phb"/>
                             <constraint firstItem="FU3-L1-vVk" firstAttribute="trailing" secondItem="f5t-54-AAA" secondAttribute="trailing" id="R2x-Su-3NY"/>
-                            <constraint firstItem="A3g-BI-bf5" firstAttribute="top" secondItem="FU3-L1-vVk" secondAttribute="bottom" constant="8" symbolic="YES" id="Tdt-0d-FY9"/>
                             <constraint firstItem="tUu-Yh-nE7" firstAttribute="top" secondItem="FU3-L1-vVk" secondAttribute="bottom" constant="46" id="gZQ-XQ-CZh"/>
                             <constraint firstItem="f5t-54-AAA" firstAttribute="top" secondItem="UPs-Ru-LPn" secondAttribute="bottom" id="i1Q-ua-7tj"/>
                             <constraint firstItem="f5t-54-AAA" firstAttribute="leading" secondItem="5Cy-2J-bd6" secondAttribute="leading" id="mxW-wQ-y43"/>
+                            <constraint firstAttribute="bottom" secondItem="FU3-L1-vVk" secondAttribute="bottom" id="rfw-aX-EDP"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
