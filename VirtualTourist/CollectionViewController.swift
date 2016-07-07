@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import Alamofire
 
 class CollectionViewController: UIViewController {
     var mapPinAnnotation:MKAnnotation?
@@ -20,7 +21,26 @@ class CollectionViewController: UIViewController {
             let span = MKCoordinateSpanMake(0.075, 0.075)
             let region = MKCoordinateRegion(center: annotation.coordinate, span: span)
             map.setRegion(region, animated: true)
+            print(annotation.coordinate)
+            
+            Alamofire.request(.GET, Config.API.Domain,
+                parameters: [
+                    "method": Config.API.SearchMethod,
+                    "api_key": Config.API.Key,
+                    "lat": annotation.coordinate.latitude,
+                    "lon": annotation.coordinate.longitude,
+                    "format": Config.API.Format,
+                    "nojsoncallback": "1"
+                ])
+                .validate()
+                .responseJSON { (response) -> Void in
+                    guard response.result.isSuccess else {
+                        print("Error while fetching photos data: \(response.result.error)")
+                        return
+                    }
+                    
+                    print(response)
+                }
         }
-
     }
 }

@@ -15,6 +15,7 @@
 		E2B2BF7D1D15236100CF9F94 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E2B2BF7B1D15236100CF9F94 /* LaunchScreen.storyboard */; };
 		E2B2BF851D152DC600CF9F94 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2B2BF841D152DC600CF9F94 /* MapKit.framework */; };
 		E2B2BF871D152E9C00CF9F94 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B2BF861D152E9C00CF9F94 /* MapViewController.swift */; };
+		E2D71F071D2E1F6E005C4AE1 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D71F061D2E1F6E005C4AE1 /* Config.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		E2B2BF7E1D15236100CF9F94 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E2B2BF841D152DC600CF9F94 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		E2B2BF861D152E9C00CF9F94 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		E2D71F061D2E1F6E005C4AE1 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		EB51B9F0B547C3E2AFE3E441 /* Pods_VirtualTourist.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VirtualTourist.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -91,6 +93,7 @@
 				E2B2BF791D15236100CF9F94 /* Assets.xcassets */,
 				E2B2BF7B1D15236100CF9F94 /* LaunchScreen.storyboard */,
 				E2B2BF7E1D15236100CF9F94 /* Info.plist */,
+				E2D71F061D2E1F6E005C4AE1 /* Config.swift */,
 			);
 			path = VirtualTourist;
 			sourceTree = "<group>";
@@ -218,6 +221,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E21632E21D16277B00029355 /* CollectionViewController.swift in Sources */,
+				E2D71F071D2E1F6E005C4AE1 /* Config.swift in Sources */,
 				E2B2BF731D15236100CF9F94 /* AppDelegate.swift in Sources */,
 				E2B2BF871D152E9C00CF9F94 /* MapViewController.swift in Sources */,
 			);
