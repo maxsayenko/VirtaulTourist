@@ -1,5 +1,5 @@
 //
-//  ImageInfo.swift
+//  PhotoInfo.swift
 //  VirtualTourist
 //
 //  Created by Max Saienko on 7/8/16.
@@ -9,7 +9,7 @@
 import Foundation
 import SwiftyJSON
 
-struct ImageInfo {
+struct PhotoInfo {
     var farmId: Int?
     var id: String = ""
     var serverId: String = ""

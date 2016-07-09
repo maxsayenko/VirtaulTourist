@@ -14,9 +14,10 @@ import SwiftyJSON
 
 class CollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     var mapPinAnnotation:MKAnnotation?
-    var collectionImages:[String] = []
+    var collectionImages:[PhotoInfo] = []
     
     @IBOutlet var map: MKMapView!
+    @IBOutlet var collection: UICollectionView!
     
     override func viewDidLoad() {
         if let annotation = mapPinAnnotation {
@@ -43,46 +44,21 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
                         return
                     }
                     if let result = response.result.value {
-                        print("got result")
                         let jsonData = JSON(result)
-//                        debugPrint(jsonData["photos","photo"].array)
                         if let photos = jsonData["photos","photo"].array {
-                            let images = photos.map({ photoJson -> ImageInfo? in
-                                return ImageInfo(imageJsonData: photoJson)
+                            self.collectionImages = photos.map({ photoJson -> PhotoInfo? in
+                                return PhotoInfo(imageJsonData: photoJson)
                             }).flatMap{ $0 }
-                            
-                            debugPrint(images)
-                            
-                            images.map{
-                                print($0.getImageUrl())
-                                print("+++++++++++++++")
-                            }
-
-//                            photos.map({_ in
-//                                debugPrint({0})
-//                                debugPrint({1})
-//                                debugPrint("=====================")
-//                            })
+                            self.collection.reloadData()
+                            print(self.collectionImages.count)
                         }
                     }
-                    
-                    
-                    
-                    
-                    debugPrint("----------**********----------")
-                    //debugPrint(jsonData["photos"]["photo"])
-                    debugPrint("----------**********----------")
-                    
-                    
-                    debugPrint("================")
-                    debugPrint(response.result.value!["photos"]!!["photo"]!![0])
-                    debugPrint("================")
                 }
         }
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        return collectionImages.count
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -93,9 +69,12 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         // Use the outlet in our custom class to get a reference to the UILabel in the cell
 //        cell.myLabel.text = self.items[indexPath.item]
         //cell.picture = UIImageView()
-        Alamofire.request(.GET, "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcR_vITP0tVfYXRpX4rTtlviViPDIrvAzJUx8IUSv4UCh8FhOwyZMg", parameters: nil, encoding: ParameterEncoding.URL, headers: ["Content-Type":"image"])
+        let photoInfo = collectionImages[indexPath.row]
+        debugPrint(photoInfo)
+        debugPrint(photoInfo.getImageUrl())
+        Alamofire.request(.GET, photoInfo.getImageUrl(), parameters: nil, encoding: ParameterEncoding.URL, headers: ["Content-Type":"image"])
             .responseImage { response in
-//                debugPrint(response)
+                debugPrint(response)
 //                
 //                print(response.request)
 //                print(response.response)

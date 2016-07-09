@@ -161,6 +161,7 @@
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="collection" destination="FU3-L1-vVk" id="vQ4-H2-Ppi"/>
                         <outlet property="map" destination="f5t-54-AAA" id="giu-36-NGV"/>
                     </connections>
                 </viewController>
