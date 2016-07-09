@@ -8,5 +8,5 @@ target 'VirtualTourist' do
   # Pods for VirtualTourist
   pod 'Alamofire', '~> 3.2.1'
   pod 'AlamofireImage', '~> 2.0'
-
+  pod 'SwiftyJSON', '~> 2.3.2'
 end

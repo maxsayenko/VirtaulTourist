@@ -10,9 +10,11 @@ import UIKit
 import MapKit
 import Alamofire
 import AlamofireImage
+import SwiftyJSON
 
 class CollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     var mapPinAnnotation:MKAnnotation?
+    var collectionImages:[String] = []
     
     @IBOutlet var map: MKMapView!
     
@@ -31,6 +33,7 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
                     "lat": annotation.coordinate.latitude,
                     "lon": annotation.coordinate.longitude,
                     "format": Config.API.Format,
+                    "per_page": 21,
                     "nojsoncallback": "1"
                 ])
                 .validate()
@@ -39,8 +42,41 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
                         print("Error while fetching photos data: \(response.result.error)")
                         return
                     }
+                    if let result = response.result.value {
+                        print("got result")
+                        let jsonData = JSON(result)
+//                        debugPrint(jsonData["photos","photo"].array)
+                        if let photos = jsonData["photos","photo"].array {
+                            let images = photos.map({ photoJson -> ImageInfo? in
+                                return ImageInfo(imageJsonData: photoJson)
+                            }).flatMap{ $0 }
+                            
+                            debugPrint(images)
+                            
+                            images.map{
+                                print($0.getImageUrl())
+                                print("+++++++++++++++")
+                            }
+
+//                            photos.map({_ in
+//                                debugPrint({0})
+//                                debugPrint({1})
+//                                debugPrint("=====================")
+//                            })
+                        }
+                    }
                     
-                   // print(response)
+                    
+                    
+                    
+                    debugPrint("----------**********----------")
+                    //debugPrint(jsonData["photos"]["photo"])
+                    debugPrint("----------**********----------")
+                    
+                    
+                    debugPrint("================")
+                    debugPrint(response.result.value!["photos"]!!["photo"]!![0])
+                    debugPrint("================")
                 }
         }
     }
@@ -59,12 +95,12 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         //cell.picture = UIImageView()
         Alamofire.request(.GET, "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcR_vITP0tVfYXRpX4rTtlviViPDIrvAzJUx8IUSv4UCh8FhOwyZMg", parameters: nil, encoding: ParameterEncoding.URL, headers: ["Content-Type":"image"])
             .responseImage { response in
-                debugPrint(response)
-                
-                print(response.request)
-                print(response.response)
-                debugPrint(response.result)
-                
+//                debugPrint(response)
+//                
+//                print(response.request)
+//                print(response.response)
+//                debugPrint(response.result)
+//                
                 if let image = response.result.value {
                     print("image downloaded: \(image)")
                     
@@ -76,7 +112,7 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
                         debugPrint("new pic at \(indexPath)")
                         if let cellToUpdate = collectionView.cellForItemAtIndexPath(indexPath) as! PictureCell? {
                             cellToUpdate.picture.image = image
-                            debugPrint(cellToUpdate.picture.image)
+                            //debugPrint(cellToUpdate.picture.image)
                         }
                     })
                 }

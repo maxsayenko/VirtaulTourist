@@ -17,6 +17,7 @@
 		E2B2BF871D152E9C00CF9F94 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B2BF861D152E9C00CF9F94 /* MapViewController.swift */; };
 		E2D71F071D2E1F6E005C4AE1 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D71F061D2E1F6E005C4AE1 /* Config.swift */; };
 		E2D71F0C1D2E39BE005C4AE1 /* PictureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D71F0B1D2E39BE005C4AE1 /* PictureCell.swift */; };
+		E2D71F0F1D30C0AB005C4AE1 /* ImageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D71F0E1D30C0AB005C4AE1 /* ImageInfo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		E2B2BF861D152E9C00CF9F94 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		E2D71F061D2E1F6E005C4AE1 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		E2D71F0B1D2E39BE005C4AE1 /* PictureCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PictureCell.swift; sourceTree = "<group>"; };
+		E2D71F0E1D30C0AB005C4AE1 /* ImageInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageInfo.swift; sourceTree = "<group>"; };
 		EB51B9F0B547C3E2AFE3E441 /* Pods_VirtualTourist.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VirtualTourist.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -88,6 +90,7 @@
 		E2B2BF711D15236100CF9F94 /* VirtualTourist */ = {
 			isa = PBXGroup;
 			children = (
+				E2D71F0D1D30C080005C4AE1 /* DataModels */,
 				E2D71F0A1D2E3955005C4AE1 /* CollectionView */,
 				E2B2BF861D152E9C00CF9F94 /* MapViewController.swift */,
 				E2B2BF721D15236100CF9F94 /* AppDelegate.swift */,
@@ -107,6 +110,14 @@
 				E2D71F0B1D2E39BE005C4AE1 /* PictureCell.swift */,
 			);
 			path = CollectionView;
+			sourceTree = "<group>";
+		};
+		E2D71F0D1D30C080005C4AE1 /* DataModels */ = {
+			isa = PBXGroup;
+			children = (
+				E2D71F0E1D30C0AB005C4AE1 /* ImageInfo.swift */,
+			);
+			path = DataModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -234,6 +245,7 @@
 				E21632E21D16277B00029355 /* CollectionViewController.swift in Sources */,
 				E2D71F071D2E1F6E005C4AE1 /* Config.swift in Sources */,
 				E2D71F0C1D2E39BE005C4AE1 /* PictureCell.swift in Sources */,
+				E2D71F0F1D30C0AB005C4AE1 /* ImageInfo.swift in Sources */,
 				E2B2BF731D15236100CF9F94 /* AppDelegate.swift in Sources */,
 				E2B2BF871D152E9C00CF9F94 /* MapViewController.swift in Sources */,
 			);
