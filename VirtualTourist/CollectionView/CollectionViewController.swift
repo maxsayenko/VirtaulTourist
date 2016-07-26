@@ -16,10 +16,20 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
     var mapPinAnnotation:MKAnnotation?
     var collectionImages:[PhotoInfo] = []
     
+    private let leftAndRightPaddings: CGFloat = 5.0
+    private let numberOfItemsPerRow: CGFloat = 3.0
+    private let totalSectionsInsets: CGFloat = 6.0 // From storyboard
+    
     @IBOutlet var map: MKMapView!
     @IBOutlet var collection: UICollectionView!
     
     override func viewDidLoad() {
+        let bounds = UIScreen.mainScreen().bounds
+        let width = (bounds.size.width - totalSectionsInsets - leftAndRightPaddings * (numberOfItemsPerRow + 1)) / numberOfItemsPerRow
+        let layout = collection.collectionViewLayout as! UICollectionViewFlowLayout
+        layout.itemSize = CGSizeMake(width, width)
+        debugPrint("width = \(width)")
+        
         if let annotation = mapPinAnnotation {
             map.addAnnotation(annotation)
             let span = MKCoordinateSpanMake(0.075, 0.075)
@@ -27,6 +37,7 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
             map.setRegion(region, animated: true)
             print(annotation.coordinate)
             
+            // TODO: Network
             Alamofire.request(.GET, Config.API.Domain,
                 parameters: [
                     "method": Config.API.SearchMethod,
@@ -66,39 +77,21 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         // get a reference to our storyboard cell
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath) as! PictureCell
         
-        // Use the outlet in our custom class to get a reference to the UILabel in the cell
-//        cell.myLabel.text = self.items[indexPath.item]
-        //cell.picture = UIImageView()
         let photoInfo = collectionImages[indexPath.row]
-        debugPrint(photoInfo)
-        debugPrint(photoInfo.getImageUrl())
+        
+        // TODO: Network
         Alamofire.request(.GET, photoInfo.getImageUrl(), parameters: nil, encoding: ParameterEncoding.URL, headers: ["Content-Type":"image"])
             .responseImage { response in
-                debugPrint(response)
-//                
-//                print(response.request)
-//                print(response.response)
-//                debugPrint(response.result)
-//                
                 if let image = response.result.value {
-                    print("image downloaded: \(image)")
-                    
-//                    dispatch_async(dispatch_get_main_queue()) {
-//                        cell.picture = UIImageView(image: image)
-//                    }
-                    
                     dispatch_async(dispatch_get_main_queue(), {
-                        debugPrint("new pic at \(indexPath)")
                         if let cellToUpdate = collectionView.cellForItemAtIndexPath(indexPath) as! PictureCell? {
                             cellToUpdate.picture.image = image
-                            //debugPrint(cellToUpdate.picture.image)
+                            cellToUpdate.stopSpinner()
                         }
                     })
                 }
         }
-        
-        cell.backgroundColor = UIColor.yellowColor() // make cell more visible in our example project
-        
+
         return cell
     }
 }

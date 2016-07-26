@@ -3,7 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
@@ -76,11 +76,11 @@
                                     <size key="itemSize" width="69" height="63"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="50" height="50"/>
-                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                    <inset key="sectionInset" minX="3" minY="0.0" maxX="3" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="collectionCell" id="gLc-EX-2F2" customClass="PictureCell" customModule="VirtualTourist" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="64" width="69" height="63"/>
+                                        <rect key="frame" x="3" y="0.0" width="69" height="63"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="69" height="63"/>
@@ -88,37 +88,59 @@
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="4O8-pd-43C">
                                                     <rect key="frame" x="0.0" y="0.0" width="69" height="63"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="4O8-pd-43C" secondAttribute="height" multiplier="23:21" id="PgR-25-n7V"/>
+                                                        <constraint firstAttribute="width" constant="69" id="iCl-lG-bL2"/>
+                                                    </constraints>
+                                                    <variation key="default">
+                                                        <mask key="constraints">
+                                                            <exclude reference="PgR-25-n7V"/>
+                                                            <exclude reference="iCl-lG-bL2"/>
+                                                        </mask>
+                                                    </variation>
                                                 </imageView>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="z0t-6w-Jg6">
+                                                    <rect key="frame" x="16" y="13" width="37" height="37"/>
+                                                </activityIndicatorView>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <constraints>
                                             <constraint firstItem="4O8-pd-43C" firstAttribute="top" secondItem="gLc-EX-2F2" secondAttribute="top" id="6pH-79-Ren"/>
+                                            <constraint firstItem="z0t-6w-Jg6" firstAttribute="centerX" secondItem="4O8-pd-43C" secondAttribute="centerX" id="I52-Wj-Sa2"/>
                                             <constraint firstAttribute="trailing" secondItem="4O8-pd-43C" secondAttribute="trailing" id="Tbg-8y-Xvx"/>
+                                            <constraint firstItem="z0t-6w-Jg6" firstAttribute="centerY" secondItem="4O8-pd-43C" secondAttribute="centerY" id="c7u-WD-icT"/>
                                             <constraint firstItem="4O8-pd-43C" firstAttribute="leading" secondItem="gLc-EX-2F2" secondAttribute="leading" id="sb5-OI-fJP"/>
                                             <constraint firstAttribute="bottom" secondItem="4O8-pd-43C" secondAttribute="bottom" id="z7b-9k-IBB"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="loadIndicator" destination="z0t-6w-Jg6" id="y6q-XE-d5J"/>
                                             <outlet property="picture" destination="4O8-pd-43C" id="kfv-yK-P11"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
                                 <collectionReusableView key="sectionFooterView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="1OK-nM-tYC">
-                                    <rect key="frame" x="0.0" y="127" width="600" height="50"/>
+                                    <rect key="frame" x="0.0" y="63" width="600" height="50"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A3g-BI-bf5">
+                                        <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="T2G-kb-f31">
                                             <rect key="frame" x="237" y="8" width="127" height="30"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="127" id="8X9-UN-eaf"/>
-                                            </constraints>
-                                            <state key="normal" title="New Collection"/>
-                                        </button>
+                                            <subviews>
+                                                <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="D4x-u7-v60">
+                                                    <rect key="frame" x="0.0" y="0.0" width="127" height="30"/>
+                                                    <subviews>
+                                                        <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A3g-BI-bf5">
+                                                            <rect key="frame" x="0.0" y="0.0" width="127" height="30"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="127" id="8X9-UN-eaf"/>
+                                                            </constraints>
+                                                            <state key="normal" title="New Collection"/>
+                                                        </button>
+                                                    </subviews>
+                                                </stackView>
+                                            </subviews>
+                                        </stackView>
                                     </subviews>
-                                    <constraints>
-                                        <constraint firstItem="A3g-BI-bf5" firstAttribute="centerX" secondItem="1OK-nM-tYC" secondAttribute="centerX" id="hp0-ue-7Aw"/>
-                                        <constraint firstItem="A3g-BI-bf5" firstAttribute="top" secondItem="1OK-nM-tYC" secondAttribute="topMargin" id="yiL-fH-lL0"/>
-                                    </constraints>
                                 </collectionReusableView>
                                 <variation key="default">
                                     <mask key="constraints">
