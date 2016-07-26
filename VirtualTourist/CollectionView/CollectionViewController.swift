@@ -18,17 +18,16 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
     
     private let leftAndRightPaddings: CGFloat = 5.0
     private let numberOfItemsPerRow: CGFloat = 3.0
-    private let totalSectionsInsets: CGFloat = 6.0 // From storyboard
     
     @IBOutlet var map: MKMapView!
     @IBOutlet var collection: UICollectionView!
     
     override func viewDidLoad() {
+        let layout = collection.collectionViewLayout as! UICollectionViewFlowLayout
+        let totalSectionsInsets = layout.sectionInset.left + layout.sectionInset.right
         let bounds = UIScreen.mainScreen().bounds
         let width = (bounds.size.width - totalSectionsInsets - leftAndRightPaddings * (numberOfItemsPerRow + 1)) / numberOfItemsPerRow
-        let layout = collection.collectionViewLayout as! UICollectionViewFlowLayout
         layout.itemSize = CGSizeMake(width, width)
-        debugPrint("width = \(width)")
         
         if let annotation = mapPinAnnotation {
             map.addAnnotation(annotation)
