@@ -15,6 +15,8 @@ import SwiftyJSON
 class CollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     var mapPinAnnotation:MKAnnotation?
     var collectionImages:[PhotoInfo] = []
+    var currentPageIndex = 1
+    var totalPagesForThisCollection: Int = 0
     
     private let leftAndRightPaddings: CGFloat = 5.0
     private let numberOfItemsPerRow: CGFloat = 3.0
@@ -22,7 +24,50 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
     @IBOutlet var map: MKMapView!
     @IBOutlet var collection: UICollectionView!
     
-    @IBAction func NewCollectionTouch(sender: UIButton) {
+    @IBAction func newCollectionTouch(sender: UIButton) {
+        self.collectionImages = []
+        self.collection.reloadData()
+        
+        if let annotation = mapPinAnnotation {
+            map.addAnnotation(annotation)
+            let span = MKCoordinateSpanMake(0.075, 0.075)
+            let region = MKCoordinateRegion(center: annotation.coordinate, span: span)
+            map.setRegion(region, animated: true)
+            print(annotation.coordinate)
+            
+            // TODO: Network
+            Alamofire.request(.GET, Config.API.Domain,
+                parameters: [
+                    "method": Config.API.SearchMethod,
+                    "api_key": Config.API.Key,
+                    "lat": annotation.coordinate.latitude,
+                    "lon": annotation.coordinate.longitude,
+                    "format": Config.API.Format,
+                    "per_page": 21,
+                    "page": ++currentPageIndex,
+                    "nojsoncallback": "1"
+                ])
+                .validate()
+                .responseJSON { (response) -> Void in
+                    guard response.result.isSuccess else {
+                        print("Error while fetching photos data: \(response.result.error)")
+                        return
+                    }
+                    if let result = response.result.value {
+                        let jsonData = JSON(result)
+                        if let totalPages = jsonData["photos", "pages"].int {
+                            self.totalPagesForThisCollection = totalPages
+                        }
+                        
+                        if let photos = jsonData["photos","photo"].array {
+                            self.collectionImages = photos.map({ photoJson -> PhotoInfo? in
+                                return PhotoInfo(imageJsonData: photoJson)
+                            }).flatMap{ $0 }
+                            self.collection.reloadData()
+                        }
+                    }
+            }
+        }
     }
     
     override func viewDidLoad() {
@@ -48,22 +93,27 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
                     "lon": annotation.coordinate.longitude,
                     "format": Config.API.Format,
                     "per_page": 21,
+                    "page": currentPageIndex,
                     "nojsoncallback": "1"
                 ])
                 .validate()
                 .responseJSON { (response) -> Void in
+                    debugPrint(response)
                     guard response.result.isSuccess else {
                         print("Error while fetching photos data: \(response.result.error)")
                         return
                     }
                     if let result = response.result.value {
                         let jsonData = JSON(result)
+                        if let totalPages = jsonData["photos", "pages"].int {
+                            self.totalPagesForThisCollection = totalPages
+                        }
+                        
                         if let photos = jsonData["photos","photo"].array {
                             self.collectionImages = photos.map({ photoJson -> PhotoInfo? in
                                 return PhotoInfo(imageJsonData: photoJson)
                             }).flatMap{ $0 }
                             self.collection.reloadData()
-                            print(self.collectionImages.count)
                         }
                     }
                 }
@@ -78,7 +128,8 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         
         // get a reference to our storyboard cell
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath) as! PictureCell
-        
+        cell.picture?.image = nil
+        cell.startSpinner()
         let photoInfo = collectionImages[indexPath.row]
         
         // TODO: Network
@@ -87,7 +138,7 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
                 if let image = response.result.value {
                     dispatch_async(dispatch_get_main_queue(), {
                         if let cellToUpdate = collectionView.cellForItemAtIndexPath(indexPath) as! PictureCell? {
-                            cellToUpdate.picture.image = image
+                            cellToUpdate.picture!.image = image
                             cellToUpdate.stopSpinner()
                         }
                     })

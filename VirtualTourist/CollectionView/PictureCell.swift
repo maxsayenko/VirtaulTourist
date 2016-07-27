@@ -9,7 +9,6 @@
 import UIKit
 
 class PictureCell: UICollectionViewCell {
-    var spinner: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
     @IBOutlet var picture: UIImageView!
     @IBOutlet var loadIndicator: UIActivityIndicatorView!
     

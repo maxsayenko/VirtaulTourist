@@ -144,7 +144,7 @@
                                         </constraints>
                                         <state key="normal" title="New Collection"/>
                                         <connections>
-                                            <action selector="NewCollectionTouch:" destination="Bqu-iW-d4q" eventType="touchUpInside" id="xNn-pk-umH"/>
+                                            <action selector="newCollectionTouch:" destination="Bqu-iW-d4q" eventType="touchUpInside" id="SIm-AR-mSa"/>
                                         </connections>
                                     </button>
                                 </subviews>
