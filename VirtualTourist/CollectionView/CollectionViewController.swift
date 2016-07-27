@@ -22,6 +22,9 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
     @IBOutlet var map: MKMapView!
     @IBOutlet var collection: UICollectionView!
     
+    @IBAction func NewCollectionTouch(sender: UIButton) {
+    }
+    
     override func viewDidLoad() {
         let layout = collection.collectionViewLayout as! UICollectionViewFlowLayout
         let totalSectionsInsets = layout.sectionInset.left + layout.sectionInset.right
