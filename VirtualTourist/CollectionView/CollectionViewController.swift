@@ -23,7 +23,6 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
     
     @IBOutlet var map: MKMapView!
     @IBOutlet var collection: UICollectionView!
-    
     @IBAction func newCollectionTouch(sender: UIButton) {
         self.collectionImages = []
         self.collection.reloadData()

@@ -47,6 +47,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
+## OMGHTTPURLRQ
+
+https://github.com/mxcl/OMGHTTPURLRQ/blob/master/README.markdown
+
+## PromiseKit
+
+https://github.com/mxcl/PromiseKit/blob/master/README.markdown
+
 ## SwiftyJSON
 
 The MIT License (MIT)

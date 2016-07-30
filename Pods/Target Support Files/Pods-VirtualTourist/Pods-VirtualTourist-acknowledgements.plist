@@ -68,6 +68,22 @@ THE SOFTWARE.
 		</dict>
 		<dict>
 			<key>FooterText</key>
+			<string>https://github.com/mxcl/OMGHTTPURLRQ/blob/master/README.markdown</string>
+			<key>Title</key>
+			<string>OMGHTTPURLRQ</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>FooterText</key>
+			<string>https://github.com/mxcl/PromiseKit/blob/master/README.markdown</string>
+			<key>Title</key>
+			<string>PromiseKit</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>FooterText</key>
 			<string>The MIT License (MIT)
 
 Copyright (c) 2014 Ruoyu Fu
