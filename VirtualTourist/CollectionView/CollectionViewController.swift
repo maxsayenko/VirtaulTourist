@@ -77,45 +77,67 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         layout.itemSize = CGSizeMake(width, width)
         
         if let annotation = mapPinAnnotation {
+
+            
+            
             map.addAnnotation(annotation)
             let span = MKCoordinateSpanMake(0.075, 0.075)
             let region = MKCoordinateRegion(center: annotation.coordinate, span: span)
             map.setRegion(region, animated: true)
             print(annotation.coordinate)
             
-            // TODO: Network
-            Alamofire.request(.GET, Config.API.Domain,
-                parameters: [
-                    "method": Config.API.SearchMethod,
-                    "api_key": Config.API.Key,
-                    "lat": annotation.coordinate.latitude,
-                    "lon": annotation.coordinate.longitude,
-                    "format": Config.API.Format,
-                    "per_page": 21,
-                    "page": currentPageIndex,
-                    "nojsoncallback": "1"
-                ])
-                .validate()
-                .responseJSON { (response) -> Void in
-                    debugPrint(response)
-                    guard response.result.isSuccess else {
-                        print("Error while fetching photos data: \(response.result.error)")
-                        return
-                    }
-                    if let result = response.result.value {
-                        let jsonData = JSON(result)
-                        if let totalPages = jsonData["photos", "pages"].int {
-                            self.totalPagesForThisCollection = totalPages
-                        }
-                        
-                        if let photos = jsonData["photos","photo"].array {
-                            self.collectionImages = photos.map({ photoJson -> PhotoInfo? in
-                                return PhotoInfo(imageJsonData: photoJson)
-                            }).flatMap{ $0 }
-                            self.collection.reloadData()
-                        }
-                    }
+            debugPrint("start")
+            FlickrService.GetImages(annotation: annotation).then{ result -> Void in
+                debugPrint("Result")
+                let jsonData = JSON(result)
+                if let totalPages = jsonData["photos", "pages"].int {
+                    self.totalPagesForThisCollection = totalPages
                 }
+                
+                if let photos = jsonData["photos","photo"].array {
+                    self.collectionImages = photos.map({ photoJson -> PhotoInfo? in
+                        return PhotoInfo(imageJsonData: photoJson)
+                    }).flatMap{ $0 }
+                    self.collection.reloadData()
+                }
+                debugPrint("ResultEND")
+            }
+            
+            debugPrint("Moving On")
+            
+            // TODO: Network
+//            Alamofire.request(.GET, Config.API.Domain,
+//                parameters: [
+//                    "method": Config.API.SearchMethod,
+//                    "api_key": Config.API.Key,
+//                    "lat": annotation.coordinate.latitude,
+//                    "lon": annotation.coordinate.longitude,
+//                    "format": Config.API.Format,
+//                    "per_page": 21,
+//                    "page": currentPageIndex,
+//                    "nojsoncallback": "1"
+//                ])
+//                .validate()
+//                .responseJSON { (response) -> Void in
+//                    debugPrint(response)
+//                    guard response.result.isSuccess else {
+//                        print("Error while fetching photos data: \(response.result.error)")
+//                        return
+//                    }
+//                    if let result = response.result.value {
+//                        let jsonData = JSON(result)
+//                        if let totalPages = jsonData["photos", "pages"].int {
+//                            self.totalPagesForThisCollection = totalPages
+//                        }
+//                        
+//                        if let photos = jsonData["photos","photo"].array {
+//                            self.collectionImages = photos.map({ photoJson -> PhotoInfo? in
+//                                return PhotoInfo(imageJsonData: photoJson)
+//                            }).flatMap{ $0 }
+//                            self.collection.reloadData()
+//                        }
+//                    }
+//                }
         }
     }
     

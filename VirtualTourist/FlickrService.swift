@@ -8,18 +8,38 @@
 
 import MapKit
 import Alamofire
-import Promissum
 import AlamofireImage
 import SwiftyJSON
+import PromiseKit
 
 import Foundation
 struct FlickrService {
-    func GetImages(page: Int = 1, annotation: MKAnnotation) {
+    static func GetImages(page: Int = 1, annotation: MKAnnotation) -> Promise<AnyObject> {
+        return Promise { fulfill, reject in
+            Alamofire.request(.GET, Config.API.Domain,
+                            parameters: [
+                                "method": Config.API.SearchMethod,
+                                "api_key": Config.API.Key,
+                                "lat": annotation.coordinate.latitude,
+                                "lon": annotation.coordinate.longitude,
+                                "format": Config.API.Format,
+                                "per_page": 21,
+                                "page": page,
+                                "nojsoncallback": "1"
+                            ])
+                .validate()
+                .responseJSON { response in
+                    switch response.result {
+                        case .Success(let dict):
+                            fulfill(dict)
+                        case .Failure(let error):
+                            reject(error)
+                    }
+            }
+        }
+
         
-        let url = "https://api.github.com/repos/tomlokhorst/Promissum"
         
-        // Start loading the JSON
-        let jsonPromise = Alamofire.request(.GET, url).
         
         // TODO: Network
 //        Alamofire.request(.GET, Config.API.Domain,
