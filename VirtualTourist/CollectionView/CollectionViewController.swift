@@ -35,14 +35,8 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
             print(annotation.coordinate)
             
             FlickrService.GetImages(++currentPageIndex, annotation: annotation).then { result -> Void in
-                let jsonData = JSON(result)
-                
-                if let photos = jsonData["photos","photo"].array {
-                    self.collectionImages = photos.map({ photoJson -> PhotoInfo? in
-                        return PhotoInfo(imageJsonData: photoJson)
-                    }).flatMap{ $0 }
-                    self.collection.reloadData()
-                }
+                self.collectionImages = result.photoInfos
+                self.collection.reloadData()
             }.error { error in
                 debugPrint("Error while fetching photos data: \(error)")
                 debugPrint(error)
@@ -64,17 +58,9 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
             map.setRegion(region, animated: true)
             
             FlickrService.GetImages(annotation: annotation).then { result -> Void in
-                let jsonData = JSON(result)
-                if let totalPages = jsonData["photos", "pages"].int {
-                    self.totalPagesForThisCollection = totalPages
-                }
-                
-                if let photos = jsonData["photos","photo"].array {
-                    self.collectionImages = photos.map({ photoJson -> PhotoInfo? in
-                        return PhotoInfo(imageJsonData: photoJson)
-                    }).flatMap{ $0 }
-                    self.collection.reloadData()
-                }
+                self.totalPagesForThisCollection = result.pagesCount
+                self.collectionImages = result.photoInfos
+                self.collection.reloadData()
             }.error { error in
                 debugPrint("Error while fetching photos data: \(error)")
             }

@@ -9,9 +9,10 @@
 import MapKit
 import Alamofire
 import PromiseKit
+import SwiftyJSON
 
 struct FlickrService {
-    static func GetImages(page: Int = 1, annotation: MKAnnotation) -> Promise<AnyObject> {
+    static func GetImages(page: Int = 1, annotation: MKAnnotation) -> Promise<(pagesCount: Int, photoInfos: [PhotoInfo])> {
         return Promise { fulfill, reject in
             Alamofire.request(.GET, Config.API.Domain,
                             parameters: [
@@ -28,7 +29,21 @@ struct FlickrService {
                 .responseJSON { response in
                     switch response.result {
                         case .Success(let result):
-                            fulfill(result)
+                            var resultTuple = (pagesCount: 0, photoInfos: [PhotoInfo]())
+                            
+                            let jsonData = JSON(result)
+                            if let totalPages = jsonData["photos", "pages"].int {
+                                 resultTuple.pagesCount = totalPages
+                            }
+                            
+                            if let photos = jsonData["photos","photo"].array {
+                                resultTuple.photoInfos = photos.map({ photoJson -> PhotoInfo? in
+                                    return PhotoInfo(imageJsonData: photoJson)
+                                }).flatMap{ $0 }
+                            }
+                        
+                            fulfill(resultTuple)
+                        
                         case .Failure(let error):
                             reject(error)
                     }

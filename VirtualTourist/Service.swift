@@ -6,11 +6,8 @@
 //  Copyright © 2016 Max Saienko. All rights reserved.
 //
 
-import UIKit
-import MapKit
 import Alamofire
 import AlamofireImage
-import SwiftyJSON
 import PromiseKit
 
 struct Service {
