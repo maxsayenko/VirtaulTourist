@@ -8,11 +8,8 @@
 
 import MapKit
 import Alamofire
-import AlamofireImage
-import SwiftyJSON
 import PromiseKit
 
-import Foundation
 struct FlickrService {
     static func GetImages(page: Int = 1, annotation: MKAnnotation) -> Promise<AnyObject> {
         return Promise { fulfill, reject in
@@ -30,8 +27,8 @@ struct FlickrService {
                 .validate()
                 .responseJSON { response in
                     switch response.result {
-                        case .Success(let dict):
-                            fulfill(dict)
+                        case .Success(let result):
+                            fulfill(result)
                         case .Failure(let error):
                             reject(error)
                     }

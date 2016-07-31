@@ -34,37 +34,18 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
             map.setRegion(region, animated: true)
             print(annotation.coordinate)
             
-            // TODO: Network
-            Alamofire.request(.GET, Config.API.Domain,
-                parameters: [
-                    "method": Config.API.SearchMethod,
-                    "api_key": Config.API.Key,
-                    "lat": annotation.coordinate.latitude,
-                    "lon": annotation.coordinate.longitude,
-                    "format": Config.API.Format,
-                    "per_page": 21,
-                    "page": ++currentPageIndex,
-                    "nojsoncallback": "1"
-                ])
-                .validate()
-                .responseJSON { (response) -> Void in
-                    guard response.result.isSuccess else {
-                        print("Error while fetching photos data: \(response.result.error)")
-                        return
-                    }
-                    if let result = response.result.value {
-                        let jsonData = JSON(result)
-                        if let totalPages = jsonData["photos", "pages"].int {
-                            self.totalPagesForThisCollection = totalPages
-                        }
-                        
-                        if let photos = jsonData["photos","photo"].array {
-                            self.collectionImages = photos.map({ photoJson -> PhotoInfo? in
-                                return PhotoInfo(imageJsonData: photoJson)
-                            }).flatMap{ $0 }
-                            self.collection.reloadData()
-                        }
-                    }
+            FlickrService.GetImages(++currentPageIndex, annotation: annotation).then { result -> Void in
+                let jsonData = JSON(result)
+                
+                if let photos = jsonData["photos","photo"].array {
+                    self.collectionImages = photos.map({ photoJson -> PhotoInfo? in
+                        return PhotoInfo(imageJsonData: photoJson)
+                    }).flatMap{ $0 }
+                    self.collection.reloadData()
+                }
+            }.error { error in
+                debugPrint("Error while fetching photos data: \(error)")
+                debugPrint(error)
             }
         }
     }
@@ -77,18 +58,12 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         layout.itemSize = CGSizeMake(width, width)
         
         if let annotation = mapPinAnnotation {
-
-            
-            
             map.addAnnotation(annotation)
             let span = MKCoordinateSpanMake(0.075, 0.075)
             let region = MKCoordinateRegion(center: annotation.coordinate, span: span)
             map.setRegion(region, animated: true)
-            print(annotation.coordinate)
             
-            debugPrint("start")
-            FlickrService.GetImages(annotation: annotation).then{ result -> Void in
-                debugPrint("Result")
+            FlickrService.GetImages(annotation: annotation).then { result -> Void in
                 let jsonData = JSON(result)
                 if let totalPages = jsonData["photos", "pages"].int {
                     self.totalPagesForThisCollection = totalPages
@@ -100,44 +75,9 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
                     }).flatMap{ $0 }
                     self.collection.reloadData()
                 }
-                debugPrint("ResultEND")
+            }.error { error in
+                debugPrint("Error while fetching photos data: \(error)")
             }
-            
-            debugPrint("Moving On")
-            
-            // TODO: Network
-//            Alamofire.request(.GET, Config.API.Domain,
-//                parameters: [
-//                    "method": Config.API.SearchMethod,
-//                    "api_key": Config.API.Key,
-//                    "lat": annotation.coordinate.latitude,
-//                    "lon": annotation.coordinate.longitude,
-//                    "format": Config.API.Format,
-//                    "per_page": 21,
-//                    "page": currentPageIndex,
-//                    "nojsoncallback": "1"
-//                ])
-//                .validate()
-//                .responseJSON { (response) -> Void in
-//                    debugPrint(response)
-//                    guard response.result.isSuccess else {
-//                        print("Error while fetching photos data: \(response.result.error)")
-//                        return
-//                    }
-//                    if let result = response.result.value {
-//                        let jsonData = JSON(result)
-//                        if let totalPages = jsonData["photos", "pages"].int {
-//                            self.totalPagesForThisCollection = totalPages
-//                        }
-//                        
-//                        if let photos = jsonData["photos","photo"].array {
-//                            self.collectionImages = photos.map({ photoJson -> PhotoInfo? in
-//                                return PhotoInfo(imageJsonData: photoJson)
-//                            }).flatMap{ $0 }
-//                            self.collection.reloadData()
-//                        }
-//                    }
-//                }
         }
     }
     
@@ -153,17 +93,15 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         cell.startSpinner()
         let photoInfo = collectionImages[indexPath.row]
         
-        // TODO: Network
-        Alamofire.request(.GET, photoInfo.getImageUrl(), parameters: nil, encoding: ParameterEncoding.URL, headers: ["Content-Type":"image"])
-            .responseImage { response in
-                if let image = response.result.value {
-                    dispatch_async(dispatch_get_main_queue(), {
-                        if let cellToUpdate = collectionView.cellForItemAtIndexPath(indexPath) as! PictureCell? {
-                            cellToUpdate.picture!.image = image
-                            cellToUpdate.stopSpinner()
-                        }
-                    })
+        Service.LoadImage(url: photoInfo.getImageUrl()).then { image in
+            dispatch_async(dispatch_get_main_queue(), {
+                if let cellToUpdate = collectionView.cellForItemAtIndexPath(indexPath) as! PictureCell? {
+                    cellToUpdate.picture!.image = image
+                    cellToUpdate.stopSpinner()
                 }
+            })
+        }.error{ err in
+            debugPrint("Error while fetching Image from url: \(err)")
         }
 
         return cell
