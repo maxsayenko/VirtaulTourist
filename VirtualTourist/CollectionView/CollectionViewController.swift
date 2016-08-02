@@ -92,4 +92,13 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
 
         return cell
     }
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        let cell = collectionView.cellForItemAtIndexPath(indexPath) as! PictureCell
+        if(!cell.isTapped) {
+            cell.select()
+        } else {
+            cell.unSelect()
+        }
+    }
 }

@@ -12,6 +12,8 @@ class PictureCell: UICollectionViewCell {
     @IBOutlet var picture: UIImageView!
     @IBOutlet var loadIndicator: UIActivityIndicatorView!
     
+    var isTapped: Bool = false
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -20,6 +22,16 @@ class PictureCell: UICollectionViewCell {
         super.init(coder: aDecoder)
         self.backgroundColor = UIColor.blackColor()
         self.layer.cornerRadius = 10.0
+    }
+    
+    func select() {
+        self.picture.alpha = 0.5
+        self.isTapped = true
+    }
+    
+    func unSelect() {
+        self.picture.alpha = 1
+        self.isTapped = false
     }
     
     func startSpinner() {
