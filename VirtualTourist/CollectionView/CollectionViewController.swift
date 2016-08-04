@@ -55,6 +55,8 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         }
         collection.deleteItemsAtIndexPaths(Array(picsToDelete))
         picsToDelete.removeAll()
+        
+        updateButtonsVisibility()
     }
     
     override func viewDidLoad() {
@@ -77,6 +79,16 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
             }.error { error in
                 debugPrint("Error while fetching photos data: \(error)")
             }
+        }
+    }
+    
+    func updateButtonsVisibility() {
+        if(picsToDelete.count > 0) {
+            newCollectionBtn.hidden = true
+            deleteBtn.hidden = false
+        } else {
+            newCollectionBtn.hidden = false
+            deleteBtn.hidden = true
         }
     }
     
@@ -122,14 +134,7 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
             cell.select()
             picsToDelete.insert(indexPath)
         }
-
-        // TODO: abstract away
-        if(picsToDelete.count > 0) {
-            newCollectionBtn.hidden = true
-            deleteBtn.hidden = false
-        } else {
-            newCollectionBtn.hidden = false
-            deleteBtn.hidden = true
-        }
+        
+        updateButtonsVisibility()
     }
 }

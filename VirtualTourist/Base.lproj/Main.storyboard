@@ -147,8 +147,11 @@
                                             <action selector="newCollectionTouch:" destination="Bqu-iW-d4q" eventType="touchUpInside" id="SIm-AR-mSa"/>
                                         </connections>
                                     </button>
-                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hzk-Mf-8gC">
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hzk-Mf-8gC">
                                         <rect key="frame" x="243" y="10" width="114" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="114" id="rGL-0T-Dro"/>
+                                        </constraints>
                                         <state key="normal" title="Delete"/>
                                         <connections>
                                             <action selector="deleteTouch:" destination="Bqu-iW-d4q" eventType="touchUpInside" id="g7a-lK-MZ7"/>
@@ -159,14 +162,22 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="254" id="1oJ-Rb-b89"/>
                                     <constraint firstAttribute="height" constant="50" id="4b1-gn-D9G"/>
+                                    <constraint firstItem="hzk-Mf-8gC" firstAttribute="centerX" secondItem="ps2-88-A2M" secondAttribute="centerX" id="Cvt-31-PLP"/>
+                                    <constraint firstItem="hzk-Mf-8gC" firstAttribute="trailing" secondItem="QQI-JV-SHr" secondAttribute="trailing" id="GvY-95-wy7"/>
+                                    <constraint firstItem="hzk-Mf-8gC" firstAttribute="centerY" secondItem="ps2-88-A2M" secondAttribute="centerY" id="YCu-6X-qUD"/>
                                     <constraint firstItem="QQI-JV-SHr" firstAttribute="centerY" secondItem="ps2-88-A2M" secondAttribute="centerY" id="e3D-zi-IC0"/>
                                     <constraint firstItem="QQI-JV-SHr" firstAttribute="centerX" secondItem="ps2-88-A2M" secondAttribute="centerX" id="iWN-4K-gJo"/>
                                     <constraint firstAttribute="height" constant="30" id="ixF-LY-eVc"/>
+                                    <constraint firstItem="hzk-Mf-8gC" firstAttribute="leading" secondItem="QQI-JV-SHr" secondAttribute="leading" id="peE-H7-NgZ"/>
+                                    <constraint firstItem="hzk-Mf-8gC" firstAttribute="baseline" secondItem="QQI-JV-SHr" secondAttribute="baseline" id="vyl-cg-O5G"/>
                                 </constraints>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="1oJ-Rb-b89"/>
                                         <exclude reference="ixF-LY-eVc"/>
+                                        <exclude reference="GvY-95-wy7"/>
+                                        <exclude reference="peE-H7-NgZ"/>
+                                        <exclude reference="vyl-cg-O5G"/>
                                     </mask>
                                 </variation>
                             </view>
