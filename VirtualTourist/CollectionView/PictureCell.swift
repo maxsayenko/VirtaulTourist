@@ -12,8 +12,6 @@ class PictureCell: UICollectionViewCell {
     @IBOutlet var picture: UIImageView!
     @IBOutlet var loadIndicator: UIActivityIndicatorView!
     
-    var isTapped: Bool = false
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -26,12 +24,10 @@ class PictureCell: UICollectionViewCell {
     
     func select() {
         self.picture.alpha = 0.5
-        self.isTapped = true
     }
     
     func unSelect() {
         self.picture.alpha = 1
-        self.isTapped = false
     }
     
     func startSpinner() {

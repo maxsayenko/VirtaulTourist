@@ -15,6 +15,7 @@ import SwiftyJSON
 class CollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     var mapPinAnnotation:MKAnnotation?
     var collectionImages:[PhotoInfo] = []
+    var picsToDelete:Set<NSIndexPath> = Set<NSIndexPath>()
     var currentPageIndex = 1
     var totalPagesForThisCollection: Int = 0
     
@@ -23,6 +24,10 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
     
     @IBOutlet var map: MKMapView!
     @IBOutlet var collection: UICollectionView!
+
+    @IBOutlet var newCollectionBtn: UIButton!
+    @IBOutlet var deleteBtn: UIButton!
+
     @IBAction func newCollectionTouch(sender: UIButton) {
         self.collectionImages = []
         self.collection.reloadData()
@@ -42,6 +47,14 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
                 debugPrint(error)
             }
         }
+    }
+    
+    @IBAction func deleteTouch(sender: UIButton) {
+        for (indexPath) in picsToDelete.sort({ $0.row > $1.row }) {
+            collectionImages.removeAtIndex(indexPath.row)
+        }
+        collection.deleteItemsAtIndexPaths(Array(picsToDelete))
+        picsToDelete.removeAll()
     }
     
     override func viewDidLoad() {
@@ -77,6 +90,12 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath) as! PictureCell
         cell.picture?.image = nil
         cell.startSpinner()
+        
+        cell.unSelect()
+        if(picsToDelete.contains(indexPath)) {
+            cell.select()
+        }
+
         let photoInfo = collectionImages[indexPath.row]
         
         Service.LoadImage(url: photoInfo.getImageUrl()).then { image in
@@ -89,16 +108,28 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         }.error{ err in
             debugPrint("Error while fetching Image from url: \(err)")
         }
-
+        
         return cell
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! PictureCell
-        if(!cell.isTapped) {
-            cell.select()
-        } else {
+        
+        if(picsToDelete.contains(indexPath)) {
             cell.unSelect()
+            picsToDelete.remove(indexPath)
+        } else {
+            cell.select()
+            picsToDelete.insert(indexPath)
+        }
+
+        // TODO: abstract away
+        if(picsToDelete.count > 0) {
+            newCollectionBtn.hidden = true
+            deleteBtn.hidden = false
+        } else {
+            newCollectionBtn.hidden = false
+            deleteBtn.hidden = true
         }
     }
 }

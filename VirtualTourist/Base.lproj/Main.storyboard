@@ -147,6 +147,13 @@
                                             <action selector="newCollectionTouch:" destination="Bqu-iW-d4q" eventType="touchUpInside" id="SIm-AR-mSa"/>
                                         </connections>
                                     </button>
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hzk-Mf-8gC">
+                                        <rect key="frame" x="243" y="10" width="114" height="30"/>
+                                        <state key="normal" title="Delete"/>
+                                        <connections>
+                                            <action selector="deleteTouch:" destination="Bqu-iW-d4q" eventType="touchUpInside" id="g7a-lK-MZ7"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.8901960784313725" green="0.8901960784313725" blue="0.8901960784313725" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -231,7 +238,9 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="collection" destination="FU3-L1-vVk" id="vQ4-H2-Ppi"/>
+                        <outlet property="deleteBtn" destination="hzk-Mf-8gC" id="U7W-OW-muR"/>
                         <outlet property="map" destination="f5t-54-AAA" id="giu-36-NGV"/>
+                        <outlet property="newCollectionBtn" destination="QQI-JV-SHr" id="ayZ-DZ-Zf9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="D93-LX-h7H" userLabel="First Responder" sceneMemberID="firstResponder"/>
