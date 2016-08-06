@@ -11,12 +11,12 @@ import SwiftyJSON
 import CoreData
 
 class Photo: NSManagedObject {
-    var farmId: Int?
-    var id: String = ""
-    var serverId: String = ""
-    var secret: String = ""
-    var title: String = ""
-    var owner: String = ""
+    @NSManaged var farmId: NSNumber?
+    @NSManaged var id: String
+    @NSManaged var serverId: String
+    @NSManaged var secret: String
+    @NSManaged var title: String
+    @NSManaged var owner: String
     
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
