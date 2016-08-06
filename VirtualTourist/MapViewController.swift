@@ -37,30 +37,6 @@ class MapViewController: UIViewController {
             annotation.coordinate = newCoordinates
             map.addAnnotation(annotation)
 
-            
-//            CLGeocoder().reverseGeocodeLocation(CLLocation(latitude: newCoordinates.latitude, longitude: newCoordinates.longitude), completionHandler: {(placemarks, error) -> Void in
-//                if error != nil {
-//                    print("Reverse geocoder failed with error" + error!.localizedDescription)
-//                    return
-//                }
-//                
-//                if(placemarks!.count > 0) {
-//                    let pm = placemarks![0] 
-//                    
-//                    // not all places have thoroughfare & subThoroughfare so validate those values
-//                    annotation.title = "\(pm.thoroughfare), \(pm.subThoroughfare)"
-//                    annotation.subtitle = pm.subLocality
-//                    //self.map.showAnnotations([annotation], animated: true)
-//                    self.map.addAnnotation(annotation)
-//                    print(pm)
-//                }
-//                else {
-//                    annotation.title = "Unknown Place"
-//                    self.map.addAnnotation(annotation)
-//                    print("Problem with the data received from geocoder")
-//                }
-////                places.append(["name":annotation.title,"latitude":"\(newCoordinates.latitude)","longitude":"\(newCoordinates.longitude)"])
-//            })
         }
     }
     
