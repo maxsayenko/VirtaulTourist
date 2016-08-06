@@ -66,8 +66,10 @@ class MapViewController: UIViewController {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "collectionSegue")
         {
+            let annotation = sender as! MKAnnotation
+            debugPrint(annotation)
             if let ctrl = segue.destinationViewController as? CollectionViewController {
-                ctrl.mapPinAnnotation = sender as? MKAnnotation
+                ctrl.pin = Pin(coordinates: annotation.coordinate, insertIntoManagedObjectContext: CoreDataStackManager.sharedInstance().scratchpadContext)
             }
         }
     }

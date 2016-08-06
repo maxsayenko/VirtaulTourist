@@ -36,7 +36,7 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
     
 
     
-    var mapPinAnnotation:MKAnnotation?
+    var pin:Pin?
     var collectionImages:[Photo] = []
     var picsToDelete:Set<NSIndexPath> = Set<NSIndexPath>()
     var currentPageIndex = 1
@@ -55,14 +55,14 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         self.collectionImages = []
         self.collection.reloadData()
         
-        if let annotation = mapPinAnnotation {
-            map.addAnnotation(annotation)
+        if let pin = pin {
+            map.addAnnotation(pin.annotation)
             let span = MKCoordinateSpanMake(0.075, 0.075)
-            let region = MKCoordinateRegion(center: annotation.coordinate, span: span)
+            let region = MKCoordinateRegion(center: pin.annotation.coordinate, span: span)
             map.setRegion(region, animated: true)
-            print(annotation.coordinate)
+            print(pin.annotation.coordinate)
             
-            FlickrService.GetImages(++currentPageIndex, annotation: annotation).then { result -> Void in
+            FlickrService.GetImages(++currentPageIndex, annotation: pin.annotation).then { result -> Void in
                 self.collectionImages = result.photoInfos
                 self.collection.reloadData()
             }.error { error in
@@ -83,19 +83,20 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
     }
     
     override func viewDidLoad() {
+        debugPrint("View did load")
         let layout = collection.collectionViewLayout as! UICollectionViewFlowLayout
         let totalSectionsInsets = layout.sectionInset.left + layout.sectionInset.right
         let bounds = UIScreen.mainScreen().bounds
         let width = (bounds.size.width - totalSectionsInsets - leftAndRightPaddings * (numberOfItemsPerRow + 1)) / numberOfItemsPerRow
         layout.itemSize = CGSizeMake(width, width)
         
-        if let annotation = mapPinAnnotation {
-            map.addAnnotation(annotation)
+        if let pin = pin {
+            map.addAnnotation(pin.annotation)
             let span = MKCoordinateSpanMake(0.075, 0.075)
-            let region = MKCoordinateRegion(center: annotation.coordinate, span: span)
+            let region = MKCoordinateRegion(center: pin.annotation.coordinate, span: span)
             map.setRegion(region, animated: true)
             
-            FlickrService.GetImages(annotation: annotation).then { result -> Void in
+            FlickrService.GetImages(annotation: pin.annotation).then { result -> Void in
                 self.totalPagesForThisCollection = result.pagesCount
                 self.collectionImages = result.photoInfos
                 
