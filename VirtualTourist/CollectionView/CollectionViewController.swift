@@ -14,7 +14,7 @@ import SwiftyJSON
 import CoreData
 
 class CollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
-    // MARK: - Core Data Convenience
+    // Core Data - Convenience methods
     lazy var sharedContext: NSManagedObjectContext =  {
         return CoreDataStackManager.sharedInstance().managedObjectContext
     }()
@@ -23,18 +23,18 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         CoreDataStackManager.sharedInstance().saveContext()
     }
     
-//    // Step 1: This would be a nice place to paste the lazy fetchedResultsController
-//    lazy var fetchedResultsController: NSFetchedResultsController = {
-//        let fetchRequest = NSFetchRequest(entityName: "Movie")
-//        
-//        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-//        fetchRequest.predicate = NSPredicate(format: "actor == %@", self.actor)
-//        
-//        let fetchResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.sharedContext, sectionNameKeyPath: nil, cacheName: nil)
-//        return fetchResultsController
-//    }()
+    lazy var fetchedResultsController: NSFetchedResultsController = {
+        let fetchRequest = NSFetchRequest(entityName: "Photo")
+        
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
+        //fetchRequest.predicate = NSPredicate(format: "actor == %@", self.actor)
+        
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.sharedContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        return fetchedResultsController
+    }()
     
-    
+
     
     var mapPinAnnotation:MKAnnotation?
     var collectionImages:[Photo] = []
@@ -98,11 +98,24 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
             FlickrService.GetImages(annotation: annotation).then { result -> Void in
                 self.totalPagesForThisCollection = result.pagesCount
                 self.collectionImages = result.photoInfos
+                
+                // CoreData - Save the context
+                self.saveContext()
+                
                 self.collection.reloadData()
             }.error { error in
                 debugPrint("Error while fetching photos data: \(error)")
             }
         }
+        
+        // Core Data - Perform the fetch and assign fetchedResultsController's delegate
+        do {
+            try fetchedResultsController.performFetch()
+        } catch let err as NSError {
+            print("fetchedResultsController.performFetch ERROR = \(err.localizedDescription)")
+        }
+        
+        fetchedResultsController.delegate = self
     }
     
     func updateButtonsVisibility() {
@@ -144,6 +157,8 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
             debugPrint("Error while fetching Image from url: \(err)")
         }
         
+        debugPrint(fetchedResultsController.objectAtIndexPath(indexPath))
+        
         return cell
     }
     
@@ -162,4 +177,48 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
     }
     
     
+}
+
+extension CollectionViewController: NSFetchedResultsControllerDelegate {
+    func controllerWillChangeContent(controller: NSFetchedResultsController) {
+        print("MovieListViewController - controllerWillChangeContent")
+        //tableView.beginUpdates()
+    }
+    
+    func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
+        print("MovieListViewController - didChangeSection \(type)")
+        switch type {
+        case .Insert: break
+            //tableView.insertSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
+            
+        case .Delete: break
+            //tableView.deleteSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
+            
+        default:
+            return
+        }
+    }
+    
+    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+        print("MovieListViewController - didChangeObject \(type.rawValue)")
+        switch type {
+        case .Insert: break
+            //tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
+        case .Delete: break
+            //tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
+        case .Move: break
+            //tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
+            //tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
+        case .Update: break
+//            let cell = tableView.cellForRowAtIndexPath(indexPath!) as! ActorTableViewCell
+//            let movie = self.fetchedResultsController.objectAtIndexPath(indexPath!) as! Movie
+//            configureCell(cell, movie: movie)
+        }
+        
+    }
+    
+    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        print("MovieListViewController - controllerDidChangeContent")
+        //tableView.endUpdates()
+    }
 }
