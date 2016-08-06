@@ -38,7 +38,8 @@ struct FlickrService {
                             
                             if let photos = jsonData["photos","photo"].array {
                                 resultTuple.photoInfos = photos.map({ photoJson -> PhotoInfo? in
-                                    return PhotoInfo(imageJsonData: photoJson)
+                                    // CoreData - adding context to the object init
+                                    return PhotoInfo(imageJsonData: photoJson, context: CoreDataStackManager.sharedInstance().managedObjectContext)
                                 }).flatMap{ $0 }
                             }
                         

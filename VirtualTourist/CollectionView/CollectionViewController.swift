@@ -11,8 +11,31 @@ import MapKit
 import Alamofire
 import AlamofireImage
 import SwiftyJSON
+import CoreData
 
 class CollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+    // MARK: - Core Data Convenience
+    lazy var sharedContext: NSManagedObjectContext =  {
+        return CoreDataStackManager.sharedInstance().managedObjectContext
+    }()
+    
+    func saveContext() {
+        CoreDataStackManager.sharedInstance().saveContext()
+    }
+    
+//    // Step 1: This would be a nice place to paste the lazy fetchedResultsController
+//    lazy var fetchedResultsController: NSFetchedResultsController = {
+//        let fetchRequest = NSFetchRequest(entityName: "Movie")
+//        
+//        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+//        fetchRequest.predicate = NSPredicate(format: "actor == %@", self.actor)
+//        
+//        let fetchResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.sharedContext, sectionNameKeyPath: nil, cacheName: nil)
+//        return fetchResultsController
+//    }()
+    
+    
+    
     var mapPinAnnotation:MKAnnotation?
     var collectionImages:[PhotoInfo] = []
     var picsToDelete:Set<NSIndexPath> = Set<NSIndexPath>()
@@ -137,4 +160,6 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         
         updateButtonsVisibility()
     }
+    
+    
 }
