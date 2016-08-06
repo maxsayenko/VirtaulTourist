@@ -10,6 +10,7 @@
 		CF5205D5E514765F9E23F27A /* Pods_VirtualTourist.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB51B9F0B547C3E2AFE3E441 /* Pods_VirtualTourist.framework */; };
 		E2104D311D565A2000DF82DC /* CoreDataStackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2104D301D565A2000DF82DC /* CoreDataStackManager.swift */; };
 		E2104D341D56619900DF82DC /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E2104D321D56619900DF82DC /* Model.xcdatamodeld */; };
+		E2104D361D568C4500DF82DC /* Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2104D351D568C4500DF82DC /* Pin.swift */; };
 		E21632E21D16277B00029355 /* CollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21632E11D16277B00029355 /* CollectionViewController.swift */; };
 		E2B2BF731D15236100CF9F94 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B2BF721D15236100CF9F94 /* AppDelegate.swift */; };
 		E2B2BF781D15236100CF9F94 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E2B2BF761D15236100CF9F94 /* Main.storyboard */; };
@@ -29,6 +30,7 @@
 		D92F8BBF192219EC63894619 /* Pods-VirtualTourist.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VirtualTourist.release.xcconfig"; path = "Pods/Target Support Files/Pods-VirtualTourist/Pods-VirtualTourist.release.xcconfig"; sourceTree = "<group>"; };
 		E2104D301D565A2000DF82DC /* CoreDataStackManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStackManager.swift; sourceTree = "<group>"; };
 		E2104D331D56619900DF82DC /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		E2104D351D568C4500DF82DC /* Pin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pin.swift; sourceTree = "<group>"; };
 		E21632E11D16277B00029355 /* CollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; name = CollectionViewController.swift; path = VirtualTourist/CollectionView/CollectionViewController.swift; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		E2B2BF6F1D15236100CF9F94 /* VirtualTourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VirtualTourist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2B2BF721D15236100CF9F94 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				E2D71F0E1D30C0AB005C4AE1 /* Photo.swift */,
+				E2104D351D568C4500DF82DC /* Pin.swift */,
 			);
 			path = DataModels;
 			sourceTree = "<group>";
@@ -263,6 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E21632E21D16277B00029355 /* CollectionViewController.swift in Sources */,
+				E2104D361D568C4500DF82DC /* Pin.swift in Sources */,
 				E2C5B1141D4D893800A18471 /* Service.swift in Sources */,
 				E2104D311D565A2000DF82DC /* CoreDataStackManager.swift in Sources */,
 				E2D71F071D2E1F6E005C4AE1 /* Config.swift in Sources */,
