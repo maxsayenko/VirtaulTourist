@@ -37,7 +37,7 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
     
     
     var mapPinAnnotation:MKAnnotation?
-    var collectionImages:[PhotoInfo] = []
+    var collectionImages:[Photo] = []
     var picsToDelete:Set<NSIndexPath> = Set<NSIndexPath>()
     var currentPageIndex = 1
     var totalPagesForThisCollection: Int = 0

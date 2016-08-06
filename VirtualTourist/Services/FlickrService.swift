@@ -12,7 +12,7 @@ import PromiseKit
 import SwiftyJSON
 
 struct FlickrService {
-    static func GetImages(page: Int = 1, annotation: MKAnnotation) -> Promise<(pagesCount: Int, photoInfos: [PhotoInfo])> {
+    static func GetImages(page: Int = 1, annotation: MKAnnotation) -> Promise<(pagesCount: Int, photoInfos: [Photo])> {
         return Promise { fulfill, reject in
             Alamofire.request(.GET, Config.API.Domain,
                             parameters: [
@@ -29,7 +29,7 @@ struct FlickrService {
                 .responseJSON { response in
                     switch response.result {
                         case .Success(let result):
-                            var resultTuple = (pagesCount: 0, photoInfos: [PhotoInfo]())
+                            var resultTuple = (pagesCount: 0, photoInfos: [Photo]())
                             
                             let jsonData = JSON(result)
                             if let totalPages = jsonData["photos", "pages"].int {
@@ -37,9 +37,9 @@ struct FlickrService {
                             }
                             
                             if let photos = jsonData["photos","photo"].array {
-                                resultTuple.photoInfos = photos.map({ photoJson -> PhotoInfo? in
+                                resultTuple.photoInfos = photos.map({ photoJson -> Photo? in
                                     // CoreData - adding context to the object init
-                                    return PhotoInfo(imageJsonData: photoJson, context: CoreDataStackManager.sharedInstance().managedObjectContext)
+                                    return Photo(imageJsonData: photoJson, context: CoreDataStackManager.sharedInstance().managedObjectContext)
                                 }).flatMap{ $0 }
                             }
                         
