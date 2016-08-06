@@ -8,14 +8,36 @@
 
 import MapKit
 import UIKit
+import CoreData
 
 class MapViewController: UIViewController {
+    // Core Data - Convenience methods
+    lazy var sharedContext: NSManagedObjectContext =  {
+        return CoreDataStackManager.sharedInstance().managedObjectContext
+    }()
+    
+    func saveContext() {
+        CoreDataStackManager.sharedInstance().saveContext()
+    }
+
+    var pins = [Pin]()
+    
     @IBOutlet var map: MKMapView!
     
     override func viewDidLoad() {
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: "addAnnotation:")
         map.addGestureRecognizer(longPressGesture)
         map.delegate = self
+        
+        // Core Data - fetching pins
+        let fetchRequest = NSFetchRequest(entityName: "Pin")
+        do {
+            pins = try sharedContext.executeFetchRequest(fetchRequest) as! [Pin]
+        } catch let error as NSError {
+            debugPrint("MapView Fetch failed: \(error.localizedDescription)")
+        }
+        
+        map.addAnnotations(pins.map({$0.annotation}))
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -33,9 +55,10 @@ class MapViewController: UIViewController {
         if (gestureRecognizer.state == UIGestureRecognizerState.Began) {
             let touchPoint = gestureRecognizer.locationInView(map)
             let newCoordinates = map.convertPoint(touchPoint, toCoordinateFromView: map)
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = newCoordinates
-            map.addAnnotation(annotation)
+            // Core Data - Saving new pin
+            let pin = Pin(coordinates: newCoordinates, insertIntoManagedObjectContext: sharedContext)
+            saveContext()
+            map.addAnnotation(pin.annotation)
 
         }
     }
