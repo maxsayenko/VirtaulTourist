@@ -14,7 +14,7 @@ import SwiftyJSON
 import CoreData
 
 class CollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
-    // Core Data - Convenience methods
+    // CoreData - Convenience methods
     lazy var sharedContext: NSManagedObjectContext =  {
         return CoreDataStackManager.sharedInstance().managedObjectContext
     }()
@@ -27,14 +27,10 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         let fetchRequest = NSFetchRequest(entityName: "Photo")
         
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
-        //fetchRequest.predicate = NSPredicate(format: "actor == %@", self.actor)
-        
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.sharedContext, sectionNameKeyPath: nil, cacheName: nil)
         
         return fetchedResultsController
     }()
-    
-
     
     var pin:Pin?
     var collectionImages:[Photo] = []
@@ -89,23 +85,33 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         let bounds = UIScreen.mainScreen().bounds
         let width = (bounds.size.width - totalSectionsInsets - leftAndRightPaddings * (numberOfItemsPerRow + 1)) / numberOfItemsPerRow
         layout.itemSize = CGSizeMake(width, width)
-        
+
         if let pin = pin {
             map.addAnnotation(pin.annotation)
             let span = MKCoordinateSpanMake(0.075, 0.075)
             let region = MKCoordinateRegion(center: pin.annotation.coordinate, span: span)
             map.setRegion(region, animated: true)
+            print(pin.annotation.coordinate)
             
-            FlickrService.GetImages(annotation: pin.annotation).then { result -> Void in
-                self.totalPagesForThisCollection = result.pagesCount
-                self.collectionImages = result.photoInfos
-                
-                // CoreData - Save the context
-                self.saveContext()
-                
-                self.collection.reloadData()
-            }.error { error in
-                debugPrint("Error while fetching photos data: \(error)")
+            if(pin.photos.isEmpty) {
+                FlickrService.GetImages(annotation: pin.annotation).then { result -> Void in
+                    self.totalPagesForThisCollection = result.pagesCount
+                    self.collectionImages = result.photoInfos
+                    
+                    for photoInfo in result.photoInfos {
+                        photoInfo.pin = pin
+                    }
+                    
+                    //pin.photos = result.photoInfos
+                    //self.pin?.photos = NSSet(array: result.photoInfos)
+                    
+                    // CoreData - Save the context
+                    self.saveContext()
+                    
+                    self.collection.reloadData()
+                    }.error { error in
+                        debugPrint("Error while fetching photos data: \(error)")
+                }
             }
         }
         
@@ -117,6 +123,11 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         }
         
         fetchedResultsController.delegate = self
+        
+//        debugPrint("------------------")
+//        debugPrint(fetchedResultsController.fetchedObjects)
+//        debugPrint(fetchedResultsController.fetchedObjects?.count)
+//        debugPrint("------------------")
     }
     
     func updateButtonsVisibility() {
@@ -157,8 +168,7 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         }.error{ err in
             debugPrint("Error while fetching Image from url: \(err)")
         }
-        
-        debugPrint(fetchedResultsController.objectAtIndexPath(indexPath))
+//        debugPrint(fetchedResultsController.objectAtIndexPath(indexPath))
         
         return cell
     }
@@ -187,7 +197,7 @@ extension CollectionViewController: NSFetchedResultsControllerDelegate {
     }
     
     func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
-        print("MovieListViewController - didChangeSection \(type)")
+        //print("MovieListViewController - didChangeSection \(type)")
         switch type {
         case .Insert: break
             //tableView.insertSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
@@ -201,7 +211,7 @@ extension CollectionViewController: NSFetchedResultsControllerDelegate {
     }
     
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
-        print("MovieListViewController - didChangeObject \(type.rawValue)")
+        //print("MovieListViewController - didChangeObject \(type.rawValue)")
         switch type {
         case .Insert: break
             //tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
