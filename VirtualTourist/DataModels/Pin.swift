@@ -11,8 +11,8 @@ import CoreData
 import MapKit
 
 class Pin: NSManagedObject {
-    @NSManaged var lat: NSNumber
-    @NSManaged var long: NSNumber
+    @NSManaged var lat: String
+    @NSManaged var long: String
     // Core Data - relational property
     @NSManaged var photos: [Photo]
     
@@ -20,25 +20,25 @@ class Pin: NSManagedObject {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
     
-    init(latitude lat: Double, longtitude long: Double, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
+    init(latitude lat: String, longtitude long: String, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
         
         let entity = NSEntityDescription.entityForName("Pin", inManagedObjectContext: context!)!
         super.init(entity: entity, insertIntoManagedObjectContext: context)
         
-        self.lat = NSNumber(double: lat)
-        self.long = NSNumber(double: long)
+        self.lat = lat
+        self.long = long
     }
     
     init(coordinates: CLLocationCoordinate2D, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
         let entity = NSEntityDescription.entityForName("Pin", inManagedObjectContext: context!)!
         super.init(entity: entity, insertIntoManagedObjectContext: context)
         
-        self.lat = NSNumber(double: coordinates.latitude)
-        self.long = NSNumber(double: coordinates.longitude)
+        self.lat = String(coordinates.latitude)
+        self.long = String(coordinates.longitude)
     }
     
     var annotation: MKAnnotation {
-        let coordinates = CLLocationCoordinate2D(latitude: Double(self.lat), longitude: Double(self.long))
+        let coordinates = CLLocationCoordinate2D(latitude: Double(self.lat)!, longitude: Double(self.long)!)
         let annotation = MKPointAnnotation()
         annotation.coordinate = coordinates
         return annotation
