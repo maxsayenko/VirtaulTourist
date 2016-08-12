@@ -13,6 +13,8 @@ import MapKit
 class Pin: NSManagedObject {
     @NSManaged var lat: NSNumber
     @NSManaged var long: NSNumber
+    // Core Data - relational property
+    @NSManaged var photos: [Photo]
     
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
         super.init(entity: entity, insertIntoManagedObjectContext: context)

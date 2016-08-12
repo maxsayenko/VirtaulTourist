@@ -18,6 +18,9 @@ class Photo: NSManagedObject {
     @NSManaged var title: String
     @NSManaged var owner: String
     
+    // Core Data - relational property
+    @NSManaged var pin: Pin?
+    
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
         super.init(entity: entity, insertIntoManagedObjectContext: context)
     }
