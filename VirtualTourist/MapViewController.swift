@@ -29,7 +29,7 @@ class MapViewController: UIViewController {
         map.addGestureRecognizer(longPressGesture)
         map.delegate = self
         
-        // Core Data - fetching pins
+        // CoreData - fetching pins
         let fetchRequest = NSFetchRequest(entityName: "Pin")
         do {
             pins = try sharedContext.executeFetchRequest(fetchRequest) as! [Pin]
@@ -55,11 +55,10 @@ class MapViewController: UIViewController {
         if (gestureRecognizer.state == UIGestureRecognizerState.Began) {
             let touchPoint = gestureRecognizer.locationInView(map)
             let newCoordinates = map.convertPoint(touchPoint, toCoordinateFromView: map)
-            // Core Data - Saving new pin
+            // CoreData - Saving new pin
             let pin = Pin(coordinates: newCoordinates, insertIntoManagedObjectContext: sharedContext)
             saveContext()
             map.addAnnotation(pin.annotation)
-
         }
     }
     
@@ -67,9 +66,21 @@ class MapViewController: UIViewController {
         if (segue.identifier == "collectionSegue")
         {
             let annotation = sender as! MKAnnotation
-            debugPrint(annotation)
             if let ctrl = segue.destinationViewController as? CollectionViewController {
-                ctrl.pin = Pin(coordinates: annotation.coordinate, insertIntoManagedObjectContext: CoreDataStackManager.sharedInstance().scratchpadContext)
+                // CoreData - fetching pin that was touched
+                let query = "lat = \(annotation.coordinate.latitude) AND long = \(annotation.coordinate.longitude)"
+                let fetchRequest = NSFetchRequest(entityName: "Pin")
+                fetchRequest.predicate = NSPredicate(format: query)
+                do {
+                    let clickedPins = try sharedContext.executeFetchRequest(fetchRequest) as! [Pin]
+                    if(clickedPins.count != 1) {
+                        debugPrint("MapView-Segue Wrong count of clicker Pins")
+                    }
+                    // Assigning a pin from CoreData to the next ctrl
+                    ctrl.pin = clickedPins[0]
+                } catch let error as NSError {
+                    debugPrint("MapView-Segue Fetch failed: \(error.localizedDescription)")
+                }
             }
         }
     }
