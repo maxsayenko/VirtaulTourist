@@ -57,6 +57,7 @@ class MapViewController: UIViewController {
             let newCoordinates = map.convertPoint(touchPoint, toCoordinateFromView: map)
             // CoreData - Saving new pin
             let pin = Pin(coordinates: newCoordinates, insertIntoManagedObjectContext: sharedContext)
+            debugPrint("saving Pin \(pin)")
             saveContext()
             map.addAnnotation(pin.annotation)
         }
@@ -65,22 +66,9 @@ class MapViewController: UIViewController {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "collectionSegue")
         {
-            let annotation = sender as! MKAnnotation
+            let pin = sender as! Pin
             if let ctrl = segue.destinationViewController as? CollectionViewController {
-                // CoreData - fetching pin that was touched
-                let query = "lat = \(annotation.coordinate.latitude) AND long = \(annotation.coordinate.longitude)"
-                let fetchRequest = NSFetchRequest(entityName: "Pin")
-                fetchRequest.predicate = NSPredicate(format: query)
-                do {
-                    let clickedPins = try sharedContext.executeFetchRequest(fetchRequest) as! [Pin]
-                    if(clickedPins.count != 1) {
-                        debugPrint("MapView-Segue Wrong count of clicker Pins")
-                    }
-                    // Assigning a pin from CoreData to the next ctrl
-                    ctrl.pin = clickedPins[0]
-                } catch let error as NSError {
-                    debugPrint("MapView-Segue Fetch failed: \(error.localizedDescription)")
-                }
+                ctrl.pin = pin
             }
         }
     }
@@ -113,7 +101,28 @@ extension MapViewController: MKMapViewDelegate {
     
     //Selecting annotation
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-        performSegueWithIdentifier("collectionSegue", sender: view.annotation)
+        if let annotation = view.annotation {
+            // CoreData - fetching pin that was touched
+            let query = "lat = \(annotation.coordinate.latitude) AND long = \(annotation.coordinate.longitude)"
+            debugPrint("query = \(query)")
+            let fetchRequest = NSFetchRequest(entityName: "Pin")
+            //fetchRequest.predicate = NSPredicate(format: query)
+            do {
+                let clickedPins = try sharedContext.executeFetchRequest(fetchRequest) as! [Pin]
+                if (clickedPins.count != 1) {
+                    debugPrint("MapView-Segue Wrong count of clicked Pins. Count = \(clickedPins.count)")
+                    let index = clickedPins.indexOf({ (pin:Pin) -> Bool in
+                        return pin.lat == String(annotation.coordinate.latitude) && pin.long == String(annotation.coordinate.longitude)
+                    })
+                    debugPrint(index)
+                    performSegueWithIdentifier("collectionSegue", sender: clickedPins[index!])
+                    // do error handling here
+                    return
+                }
+            } catch let error as NSError {
+                debugPrint("MapView-Segue Fetch failed: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
