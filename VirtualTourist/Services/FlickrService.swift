@@ -12,7 +12,7 @@ import PromiseKit
 import SwiftyJSON
 
 struct FlickrService {
-    static func GetImages(page: Int = 1, annotation: MKAnnotation) -> Promise<(pagesCount: Int, photoInfos: [Photo])> {
+    static func GetImages(annotation: MKAnnotation, page: Int = 1) -> Promise<(pagesCount: Int, photoInfos: [Photo])> {
         return Promise { fulfill, reject in
             Alamofire.request(.GET, Config.API.Domain,
                             parameters: [

@@ -60,7 +60,7 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
             map.setRegion(region, animated: true)
             print(pin.annotation.coordinate)
             
-            FlickrService.GetImages(++currentPageIndex, annotation: pin.annotation).then { result -> Void in
+            FlickrService.GetImages(pin.annotation, page: ++currentPageIndex).then { result -> Void in
                 self.collectionImages = result.photoInfos
                 self.collection.reloadData()
             }.error { error in
@@ -99,14 +99,18 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
             print(pin.annotation.coordinate)
             
             if(pin.photos.isEmpty) {
-                FlickrService.GetImages(annotation: pin.annotation).then { result -> Void in
+                FlickrService.GetImages(pin.annotation).then { result -> Void in
                     self.totalPagesForThisCollection = result.pagesCount
                     debugPrint(self.totalPagesForThisCollection)
+                    
+                    // Handling 0 or 1 page
+                    if (self.totalPagesForThisCollection < 2) {
+                        self.newCollectionBtn.enabled = false
+                    }
 
                     // Handling 0 images scenario
                     if (result.photoInfos.isEmpty) {
                         self.messageLbl.hidden = false
-                        self.newCollectionBtn.enabled = false
                     }
                     
                     self.collectionImages = result.photoInfos
