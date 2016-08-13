@@ -51,15 +51,17 @@ class MapViewController: UIViewController {
         navigationItem.title = "OK"
     }
     
+    // Save the pin
     func addAnnotation(gestureRecognizer:UIGestureRecognizer) {
         if (gestureRecognizer.state == UIGestureRecognizerState.Began) {
             let touchPoint = gestureRecognizer.locationInView(map)
             let newCoordinates = map.convertPoint(touchPoint, toCoordinateFromView: map)
             // CoreData - Saving new pin
             let pin = Pin(coordinates: newCoordinates, insertIntoManagedObjectContext: sharedContext)
-            debugPrint("saving Pin \(pin)")
+            debugPrint("saving Pin for coordinates: \(newCoordinates)")
             saveContext()
             map.addAnnotation(pin.annotation)
+            pins.append(pin)
         }
     }
     
@@ -102,26 +104,10 @@ extension MapViewController: MKMapViewDelegate {
     //Selecting annotation
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
         if let annotation = view.annotation {
-            // CoreData - fetching pin that was touched
-            let query = "lat = \(annotation.coordinate.latitude) AND long = \(annotation.coordinate.longitude)"
-            debugPrint("query = \(query)")
-            let fetchRequest = NSFetchRequest(entityName: "Pin")
-            //fetchRequest.predicate = NSPredicate(format: query)
-            do {
-                let clickedPins = try sharedContext.executeFetchRequest(fetchRequest) as! [Pin]
-                if (clickedPins.count != 1) {
-                    debugPrint("MapView-Segue Wrong count of clicked Pins. Count = \(clickedPins.count)")
-                    let index = clickedPins.indexOf({ (pin:Pin) -> Bool in
-                        return pin.lat == String(annotation.coordinate.latitude) && pin.long == String(annotation.coordinate.longitude)
-                    })
-                    debugPrint(index)
-                    performSegueWithIdentifier("collectionSegue", sender: clickedPins[index!])
-                    // do error handling here
-                    return
-                }
-            } catch let error as NSError {
-                debugPrint("MapView-Segue Fetch failed: \(error.localizedDescription)")
-            }
+            let index = pins.indexOf({ (pin:Pin) -> Bool in
+                return pin.lat == String(annotation.coordinate.latitude) && pin.long == String(annotation.coordinate.longitude)
+            })
+            performSegueWithIdentifier("collectionSegue", sender: pins[index!])
         }
     }
 }
