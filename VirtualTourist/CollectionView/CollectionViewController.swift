@@ -112,7 +112,11 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
                     }.error { error in
                         debugPrint("Error while fetching photos data: \(error)")
                 }
+            } else {
+                collectionImages = pin.photos
+                self.collection.reloadData()
             }
+            
         }
         
         // Core Data - Perform the fetch and assign fetchedResultsController's delegate
