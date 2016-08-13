@@ -181,9 +181,20 @@
                                     </mask>
                                 </variation>
                             </view>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This pin has no images." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pq0-lv-XHl">
+                                <rect key="frame" x="162" y="250" width="277" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="L44-cr-h8f"/>
+                                    <constraint firstAttribute="width" constant="277" id="g2V-lP-Vej"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="Pq0-lv-XHl" firstAttribute="centerX" secondItem="f5t-54-AAA" secondAttribute="centerX" id="0DQ-au-5Mh"/>
                             <constraint firstItem="tUu-Yh-nE7" firstAttribute="top" secondItem="f5t-54-AAA" secondAttribute="bottom" constant="360" id="3od-39-z9d"/>
                             <constraint firstItem="FU3-L1-vVk" firstAttribute="leading" secondItem="f5t-54-AAA" secondAttribute="leading" id="4Lu-u9-ZDo"/>
                             <constraint firstItem="f5t-54-AAA" firstAttribute="centerX" secondItem="5Cy-2J-bd6" secondAttribute="centerX" id="7IZ-oU-2Ly"/>
@@ -209,12 +220,14 @@
                             <constraint firstItem="FU3-L1-vVk" firstAttribute="leading" secondItem="ps2-88-A2M" secondAttribute="leading" id="i9J-p1-qbp"/>
                             <constraint firstItem="tUu-Yh-nE7" firstAttribute="top" secondItem="FU3-L1-vVk" secondAttribute="bottom" constant="52" id="lgF-hm-jcH"/>
                             <constraint firstItem="f5t-54-AAA" firstAttribute="leading" secondItem="5Cy-2J-bd6" secondAttribute="leading" id="mxW-wQ-y43"/>
+                            <constraint firstItem="Pq0-lv-XHl" firstAttribute="centerX" secondItem="5Cy-2J-bd6" secondAttribute="centerX" id="olf-Sm-T3G"/>
                             <constraint firstItem="ps2-88-A2M" firstAttribute="top" secondItem="tUu-Yh-nE7" secondAttribute="top" constant="-54" id="oqd-jL-Er7"/>
                             <constraint firstItem="ps2-88-A2M" firstAttribute="trailing" secondItem="FU3-L1-vVk" secondAttribute="trailing" id="p8m-Tw-8Dw"/>
                             <constraint firstItem="ps2-88-A2M" firstAttribute="leading" secondItem="FU3-L1-vVk" secondAttribute="leading" id="rVD-VO-Wae"/>
                             <constraint firstAttribute="bottom" secondItem="FU3-L1-vVk" secondAttribute="bottom" id="rfw-aX-EDP"/>
                             <constraint firstItem="ps2-88-A2M" firstAttribute="top" secondItem="5Cy-2J-bd6" secondAttribute="top" constant="502" id="tPe-Pd-UVA"/>
                             <constraint firstItem="FU3-L1-vVk" firstAttribute="centerX" secondItem="5Cy-2J-bd6" secondAttribute="centerX" id="w4X-as-c97"/>
+                            <constraint firstItem="Pq0-lv-XHl" firstAttribute="top" secondItem="f5t-54-AAA" secondAttribute="bottom" constant="66" id="y4j-ff-ybx"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
@@ -228,6 +241,7 @@
                                 <exclude reference="R2x-Su-3NY"/>
                                 <exclude reference="i9J-p1-qbp"/>
                                 <exclude reference="rfw-aX-EDP"/>
+                                <exclude reference="0DQ-au-5Mh"/>
                                 <exclude reference="LIZ-4g-iKe"/>
                                 <exclude reference="QSj-W8-Fgm"/>
                                 <exclude reference="Zx6-b8-PPV"/>
@@ -251,6 +265,7 @@
                         <outlet property="collection" destination="FU3-L1-vVk" id="vQ4-H2-Ppi"/>
                         <outlet property="deleteBtn" destination="hzk-Mf-8gC" id="U7W-OW-muR"/>
                         <outlet property="map" destination="f5t-54-AAA" id="giu-36-NGV"/>
+                        <outlet property="messageLbl" destination="Pq0-lv-XHl" id="32j-f5-msW"/>
                         <outlet property="newCollectionBtn" destination="QQI-JV-SHr" id="ayZ-DZ-Zf9"/>
                     </connections>
                 </viewController>

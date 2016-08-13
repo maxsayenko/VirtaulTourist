@@ -43,6 +43,8 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
     
     @IBOutlet var map: MKMapView!
     @IBOutlet var collection: UICollectionView!
+    
+    @IBOutlet var messageLbl: UILabel!
 
     @IBOutlet var newCollectionBtn: UIButton!
     @IBOutlet var deleteBtn: UIButton!
@@ -80,6 +82,9 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
     
     override func viewDidLoad() {
         debugPrint("View did load")
+        self.messageLbl.hidden = true
+        self.newCollectionBtn.enabled = true
+        
         let layout = collection.collectionViewLayout as! UICollectionViewFlowLayout
         let totalSectionsInsets = layout.sectionInset.left + layout.sectionInset.right
         let bounds = UIScreen.mainScreen().bounds
@@ -96,6 +101,14 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
             if(pin.photos.isEmpty) {
                 FlickrService.GetImages(annotation: pin.annotation).then { result -> Void in
                     self.totalPagesForThisCollection = result.pagesCount
+                    debugPrint(self.totalPagesForThisCollection)
+
+                    // Handling 0 images scenario
+                    if (result.photoInfos.isEmpty) {
+                        self.messageLbl.hidden = false
+                        self.newCollectionBtn.enabled = false
+                    }
+                    
                     self.collectionImages = result.photoInfos
                     
                     for photoInfo in result.photoInfos {
