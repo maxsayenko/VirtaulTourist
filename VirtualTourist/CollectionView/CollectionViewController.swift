@@ -20,6 +20,8 @@ class CollectionViewController: UIViewController {
     var currentPageIndex = 1
     var totalPagesForThisCollection: Int = 0
     
+    var blockOperations: [NSBlockOperation] = []
+    
     private let leftAndRightPaddings: CGFloat = 5.0
     private let numberOfItemsPerRow: CGFloat = 3.0
     
@@ -71,13 +73,18 @@ class CollectionViewController: UIViewController {
     }
     
     @IBAction func deleteTouch(sender: UIButton) {
-//        for (indexPath) in picsToDelete.sort({ $0.row > $1.row }) {
-//            collectionImages.removeAtIndex(indexPath.row)
-//        }
-//        collection.deleteItemsAtIndexPaths(Array(picsToDelete))
-//        picsToDelete.removeAll()
-//        
-//        updateButtonsVisibility()
+        //let sectionInfo = fetchedResultsController.sections![0]
+        for (indexPath) in picsToDelete.sort({ $0.row > $1.row }) {
+            //collectionImages.removeAtIndex(indexPath.row)
+            //sectionInfo.objects?.removeAtIndex(indexPath.row)
+            let item = fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject
+            sharedContext.deleteObject(item)
+//            self.managedObjectContext.deleteObject(item)
+        }
+        //collection.deleteItemsAtIndexPaths(Array(picsToDelete))
+        picsToDelete.removeAll()
+        
+        updateButtonsVisibility()
     }
     
     override func viewDidLoad() {
@@ -93,25 +100,22 @@ class CollectionViewController: UIViewController {
         
         
         
-        // CoreData - Perform the FETCH and assign fetchedResultsController's delegate
-        do {
-            try fetchedResultsController.performFetch()
-        } catch let err as NSError {
-            print("fetchedResultsController.performFetch ERROR = \(err.localizedDescription)")
-        }
-        
-        fetchedResultsController.delegate = self
-        debugPrint("fetched objects count = \(fetchedResultsController.fetchedObjects?.count)")
-        
-        
-        
-
         if let pin = pin {
             map.addAnnotation(pin.annotation)
             let span = MKCoordinateSpanMake(0.075, 0.075)
             let region = MKCoordinateRegion(center: pin.annotation.coordinate, span: span)
             map.setRegion(region, animated: true)
             print(pin.annotation.coordinate)
+            
+            // CoreData - Perform the FETCH and assign fetchedResultsController's delegate
+            do {
+                try fetchedResultsController.performFetch()
+            } catch let err as NSError {
+                print("fetchedResultsController.performFetch ERROR = \(err.localizedDescription)")
+            }
+            
+            fetchedResultsController.delegate = self
+            debugPrint("fetched objects count = \(fetchedResultsController.fetchedObjects?.count)")
             
             if(pin.photos.isEmpty) {
                 debugPrint("No images associated with this Pin. Will download and assign")
@@ -153,7 +157,6 @@ class CollectionViewController: UIViewController {
 //                collectionImages = pin.photos
 //                self.collection.reloadData()
             }
-            
         }
     }
     
@@ -165,6 +168,15 @@ class CollectionViewController: UIViewController {
             newCollectionBtn.hidden = false
             deleteBtn.hidden = true
         }
+    }
+    
+    deinit {
+        // Cancel all block operations when VC deallocates
+        for operation: NSBlockOperation in blockOperations {
+            operation.cancel()
+        }
+        
+        blockOperations.removeAll(keepCapacity: false)
     }
 }
 
@@ -182,7 +194,6 @@ extension CollectionViewController: UICollectionViewDelegate, UICollectionViewDa
         debugPrint("number of sections = \(fetchedResultsController.sections?.count)")
         debugPrint("number of objects = \(sectionInfo.numberOfObjects)")
         return sectionInfo.numberOfObjects ?? 0
-        //return collectionImages.count
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -239,17 +250,20 @@ extension CollectionViewController: UICollectionViewDelegate, UICollectionViewDa
 // MARK: FetchedResultsController
 extension CollectionViewController: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
-        print("MovieListViewController - controllerWillChangeContent")
+        print("ControllerWillChangeContent")
+        blockOperations.removeAll(keepCapacity: false)
         //tableView.beginUpdates()
     }
     
     func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
-        //print("MovieListViewController - didChangeSection \(type)")
+        debugPrint("didChangeSection \(type)")
         switch type {
-        case .Insert: break
+        case .Insert:
+            debugPrint("INSERT")
             //tableView.insertSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
             
-        case .Delete: break
+        case .Delete:
+            debugPrint("Delete")
             //tableView.deleteSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
             
         default:
@@ -258,16 +272,33 @@ extension CollectionViewController: NSFetchedResultsControllerDelegate {
     }
     
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
-        //print("MovieListViewController - didChangeObject \(type.rawValue)")
+        debugPrint("didChangeObject \(type.rawValue)")
         switch type {
-        case .Insert: break
+        case .Insert:
+            debugPrint("INSERT")
             //tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
-        case .Delete: break
+            blockOperations.append(
+                NSBlockOperation(block: { [weak self] in
+                    debugPrint("inserting")
+                    self!.collection!.insertItemsAtIndexPaths([newIndexPath!])
+                    })
+            )
+        case .Delete:
+            debugPrint("Delete")
+//            collectionView!.deleteSections(NSIndexSet(index: sectionIndex))
+            
+            blockOperations.append(
+                NSBlockOperation(block: { [weak self] in
+                    self!.collection.deleteItemsAtIndexPaths([indexPath!])
+                    })
+            )
             //tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
-        case .Move: break
+        case .Move:
+            debugPrint("Move")
             //tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
             //tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
-        case .Update: break
+        case .Update:
+            debugPrint("Update")
 //            let cell = tableView.cellForRowAtIndexPath(indexPath!) as! ActorTableViewCell
 //            let movie = self.fetchedResultsController.objectAtIndexPath(indexPath!) as! Movie
 //            configureCell(cell, movie: movie)
@@ -277,6 +308,13 @@ extension CollectionViewController: NSFetchedResultsControllerDelegate {
     
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
         print("MovieListViewController - controllerDidChangeContent")
+        collection!.performBatchUpdates({ () -> Void in
+            for operation: NSBlockOperation in self.blockOperations {
+                operation.start()
+            }
+            }, completion: { (finished) -> Void in
+                self.blockOperations.removeAll(keepCapacity: false)
+        })
         //tableView.endUpdates()
     }
 }
