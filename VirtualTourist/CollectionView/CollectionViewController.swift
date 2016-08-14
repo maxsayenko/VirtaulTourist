@@ -71,13 +71,13 @@ class CollectionViewController: UIViewController {
     }
     
     @IBAction func deleteTouch(sender: UIButton) {
-        for (indexPath) in picsToDelete.sort({ $0.row > $1.row }) {
-            collectionImages.removeAtIndex(indexPath.row)
-        }
-        collection.deleteItemsAtIndexPaths(Array(picsToDelete))
-        picsToDelete.removeAll()
-        
-        updateButtonsVisibility()
+//        for (indexPath) in picsToDelete.sort({ $0.row > $1.row }) {
+//            collectionImages.removeAtIndex(indexPath.row)
+//        }
+//        collection.deleteItemsAtIndexPaths(Array(picsToDelete))
+//        picsToDelete.removeAll()
+//        
+//        updateButtonsVisibility()
     }
     
     override func viewDidLoad() {
@@ -90,6 +90,21 @@ class CollectionViewController: UIViewController {
         let bounds = UIScreen.mainScreen().bounds
         let width = (bounds.size.width - totalSectionsInsets - leftAndRightPaddings * (numberOfItemsPerRow + 1)) / numberOfItemsPerRow
         layout.itemSize = CGSizeMake(width, width)
+        
+        
+        
+        // CoreData - Perform the FETCH and assign fetchedResultsController's delegate
+        do {
+            try fetchedResultsController.performFetch()
+        } catch let err as NSError {
+            print("fetchedResultsController.performFetch ERROR = \(err.localizedDescription)")
+        }
+        
+        fetchedResultsController.delegate = self
+        debugPrint("fetched objects count = \(fetchedResultsController.fetchedObjects?.count)")
+        
+        
+        
 
         if let pin = pin {
             map.addAnnotation(pin.annotation)
@@ -99,6 +114,7 @@ class CollectionViewController: UIViewController {
             print(pin.annotation.coordinate)
             
             if(pin.photos.isEmpty) {
+                debugPrint("No images associated with this Pin. Will download and assign")
                 FlickrService.GetImages(pin.annotation).then { result -> Void in
                     self.totalPagesForThisCollection = result.pagesCount
                     debugPrint("total pages = \(self.totalPagesForThisCollection)")
@@ -113,7 +129,7 @@ class CollectionViewController: UIViewController {
                         self.messageLbl.hidden = false
                     }
                     
-                    self.collectionImages = result.photoInfos
+                    //self.collectionImages = result.photoInfos
                     
                     for photoInfo in result.photoInfos {
                         photoInfo.pin = pin
@@ -125,30 +141,20 @@ class CollectionViewController: UIViewController {
                     // CoreData - Save the context
                     self.saveContext()
                     
-                    self.collection.reloadData()
+                    // Update the collection on the main thread
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.collection.reloadData()
+                    }
+                    
                     }.error { error in
                         debugPrint("Error while fetching photos data: \(error)")
                 }
             } else {
-                collectionImages = pin.photos
-                self.collection.reloadData()
+//                collectionImages = pin.photos
+//                self.collection.reloadData()
             }
             
         }
-        
-        // CoreData - Perform the FETCH and assign fetchedResultsController's delegate
-        do {
-            try fetchedResultsController.performFetch()
-        } catch let err as NSError {
-            print("fetchedResultsController.performFetch ERROR = \(err.localizedDescription)")
-        }
-        
-        fetchedResultsController.delegate = self
-        
-//        debugPrint("------------------")
-//        debugPrint(fetchedResultsController.fetchedObjects)
-//        debugPrint(fetchedResultsController.fetchedObjects?.count)
-//        debugPrint("------------------")
     }
     
     func updateButtonsVisibility() {
