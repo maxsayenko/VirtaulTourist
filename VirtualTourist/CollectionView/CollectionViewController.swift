@@ -14,6 +14,15 @@ import SwiftyJSON
 import CoreData
 
 class CollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+    var pin:Pin?
+    var collectionImages:[Photo] = []
+    var picsToDelete:Set<NSIndexPath> = Set<NSIndexPath>()
+    var currentPageIndex = 1
+    var totalPagesForThisCollection: Int = 0
+    
+    private let leftAndRightPaddings: CGFloat = 5.0
+    private let numberOfItemsPerRow: CGFloat = 3.0
+    
     // CoreData - Convenience methods
     lazy var sharedContext: NSManagedObjectContext =  {
         return CoreDataStackManager.sharedInstance().managedObjectContext
@@ -25,21 +34,12 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
     
     lazy var fetchedResultsController: NSFetchedResultsController = {
         let fetchRequest = NSFetchRequest(entityName: "Photo")
-        
+        fetchRequest.predicate = NSPredicate(format: "pin == %@", self.pin!)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.sharedContext, sectionNameKeyPath: nil, cacheName: nil)
         
         return fetchedResultsController
     }()
-    
-    var pin:Pin?
-    var collectionImages:[Photo] = []
-    var picsToDelete:Set<NSIndexPath> = Set<NSIndexPath>()
-    var currentPageIndex = 1
-    var totalPagesForThisCollection: Int = 0
-    
-    private let leftAndRightPaddings: CGFloat = 5.0
-    private let numberOfItemsPerRow: CGFloat = 3.0
     
     @IBOutlet var map: MKMapView!
     @IBOutlet var collection: UICollectionView!
@@ -101,7 +101,7 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
             if(pin.photos.isEmpty) {
                 FlickrService.GetImages(pin.annotation).then { result -> Void in
                     self.totalPagesForThisCollection = result.pagesCount
-                    debugPrint(self.totalPagesForThisCollection)
+                    debugPrint("total pages = \(self.totalPagesForThisCollection)")
                     
                     // Handling 0 or 1 page
                     if (self.totalPagesForThisCollection < 2) {
@@ -136,7 +136,7 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
             
         }
         
-        // Core Data - Perform the fetch and assign fetchedResultsController's delegate
+        // CoreData - Perform the FETCH and assign fetchedResultsController's delegate
         do {
             try fetchedResultsController.performFetch()
         } catch let err as NSError {
@@ -161,37 +161,48 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         }
     }
     
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return collectionImages.count
+        let sectionInfo = fetchedResultsController.sections![section]
+        debugPrint("number of sections = \(fetchedResultsController.sections?.count)")
+        debugPrint("number of objects = \(sectionInfo.numberOfObjects)")
+        return sectionInfo.numberOfObjects ?? 0
+        //return collectionImages.count
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        
-        // get a reference to our storyboard cell
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath) as! PictureCell
-        cell.picture?.image = nil
-        cell.startSpinner()
-        
-        cell.unSelect()
-        if(picsToDelete.contains(indexPath)) {
-            cell.select()
+        // CoreData - making sure we have a Photo Item
+        if let photoInfo = fetchedResultsController.objectAtIndexPath(indexPath) as? Photo {
+            // get a reference to our storyboard cell
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath) as! PictureCell
+            cell.picture?.image = nil
+            cell.startSpinner()
+            
+            cell.unSelect()
+            if(picsToDelete.contains(indexPath)) {
+                cell.select()
+            }
+            
+            //let photoInfo = collectionImages[indexPath.row]
+            
+            Service.LoadImage(url: photoInfo.getImageUrl()).then { image in
+                dispatch_async(dispatch_get_main_queue(), {
+                    if let cellToUpdate = collectionView.cellForItemAtIndexPath(indexPath) as! PictureCell? {
+                        cellToUpdate.picture!.image = image
+                        cellToUpdate.stopSpinner()
+                    }
+                })
+                }.error{ err in
+                    debugPrint("Error while fetching Image from url: \(err)")
+            }
+            
+            return cell
         }
-
-        let photoInfo = collectionImages[indexPath.row]
         
-        Service.LoadImage(url: photoInfo.getImageUrl()).then { image in
-            dispatch_async(dispatch_get_main_queue(), {
-                if let cellToUpdate = collectionView.cellForItemAtIndexPath(indexPath) as! PictureCell? {
-                    cellToUpdate.picture!.image = image
-                    cellToUpdate.stopSpinner()
-                }
-            })
-        }.error{ err in
-            debugPrint("Error while fetching Image from url: \(err)")
-        }
-//        debugPrint(fetchedResultsController.objectAtIndexPath(indexPath))
-        
-        return cell
+        return UICollectionViewCell()
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
@@ -207,8 +218,6 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
         
         updateButtonsVisibility()
     }
-    
-    
 }
 
 extension CollectionViewController: NSFetchedResultsControllerDelegate {
