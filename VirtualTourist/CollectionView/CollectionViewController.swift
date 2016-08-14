@@ -13,7 +13,7 @@ import AlamofireImage
 import SwiftyJSON
 import CoreData
 
-class CollectionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class CollectionViewController: UIViewController {
     var pin:Pin?
     var collectionImages:[Photo] = []
     var picsToDelete:Set<NSIndexPath> = Set<NSIndexPath>()
@@ -160,7 +160,13 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
             deleteBtn.hidden = true
         }
     }
-    
+}
+
+
+
+
+// MARK: CollectionView
+extension CollectionViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -220,6 +226,11 @@ class CollectionViewController: UIViewController, UICollectionViewDataSource, UI
     }
 }
 
+
+
+
+
+// MARK: FetchedResultsController
 extension CollectionViewController: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
         print("MovieListViewController - controllerWillChangeContent")
