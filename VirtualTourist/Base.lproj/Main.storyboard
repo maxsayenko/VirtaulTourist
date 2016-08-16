@@ -103,7 +103,7 @@
                                                         </mask>
                                                     </variation>
                                                 </imageView>
-                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="z0t-6w-Jg6">
+                                                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="z0t-6w-Jg6">
                                                     <rect key="frame" x="16" y="13" width="37" height="37"/>
                                                 </activityIndicatorView>
                                             </subviews>

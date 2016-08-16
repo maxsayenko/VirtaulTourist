@@ -3,6 +3,7 @@
     <entity name="Photo" representedClassName=".Photo" syncable="YES">
         <attribute name="farmId" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="image" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
         <attribute name="owner" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="secret" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="serverId" optional="YES" attributeType="String" syncable="YES"/>
@@ -15,7 +16,7 @@
         <relationship name="photos" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Photo" inverseName="pin" inverseEntity="Photo" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Photo" positionX="-63" positionY="-18" width="128" height="150"/>
+        <element name="Photo" positionX="-63" positionY="-18" width="128" height="165"/>
         <element name="Pin" positionX="-54" positionY="36" width="128" height="90"/>
     </elements>
 </model>

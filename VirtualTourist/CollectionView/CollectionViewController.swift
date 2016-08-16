@@ -47,10 +47,10 @@ class CollectionViewController: UIViewController {
     @IBOutlet var collection: UICollectionView!
     
     @IBOutlet var messageLbl: UILabel!
-
+    
     @IBOutlet var newCollectionBtn: UIButton!
     @IBOutlet var deleteBtn: UIButton!
-
+    
     @IBAction func newCollectionTouch(sender: UIButton) {
         self.collectionImages = []
         self.collection.reloadData()
@@ -65,9 +65,9 @@ class CollectionViewController: UIViewController {
             FlickrService.GetImages(pin.annotation, page: ++currentPageIndex).then { result -> Void in
                 self.collectionImages = result.photoInfos
                 self.collection.reloadData()
-            }.error { error in
-                debugPrint("Error while fetching photos data: \(error)")
-                debugPrint(error)
+                }.error { error in
+                    debugPrint("Error while fetching photos data: \(error)")
+                    debugPrint(error)
             }
         }
     }
@@ -79,7 +79,7 @@ class CollectionViewController: UIViewController {
             //sectionInfo.objects?.removeAtIndex(indexPath.row)
             let item = fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject
             sharedContext.deleteObject(item)
-//            self.managedObjectContext.deleteObject(item)
+            //            self.managedObjectContext.deleteObject(item)
         }
         //collection.deleteItemsAtIndexPaths(Array(picsToDelete))
         picsToDelete.removeAll()
@@ -97,8 +97,6 @@ class CollectionViewController: UIViewController {
         let bounds = UIScreen.mainScreen().bounds
         let width = (bounds.size.width - totalSectionsInsets - leftAndRightPaddings * (numberOfItemsPerRow + 1)) / numberOfItemsPerRow
         layout.itemSize = CGSizeMake(width, width)
-        
-        
         
         if let pin = pin {
             map.addAnnotation(pin.annotation)
@@ -127,7 +125,7 @@ class CollectionViewController: UIViewController {
                     if (self.totalPagesForThisCollection < 2) {
                         self.newCollectionBtn.enabled = false
                     }
-
+                    
                     // Handling 0 images scenario
                     if (result.photoInfos.isEmpty) {
                         self.messageLbl.hidden = false
@@ -154,10 +152,15 @@ class CollectionViewController: UIViewController {
                         debugPrint("Error while fetching photos data: \(error)")
                 }
             } else {
-//                collectionImages = pin.photos
-//                self.collection.reloadData()
+                //                collectionImages = pin.photos
+                //                self.collection.reloadData()
             }
         }
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        saveContext()
+        super.viewWillDisappear(animated)
     }
     
     func updateButtonsVisibility() {
@@ -201,25 +204,32 @@ extension CollectionViewController: UICollectionViewDelegate, UICollectionViewDa
         if let photoInfo = fetchedResultsController.objectAtIndexPath(indexPath) as? Photo {
             // get a reference to our storyboard cell
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("collectionCell", forIndexPath: indexPath) as! PictureCell
-            cell.picture?.image = nil
-            cell.startSpinner()
             
             cell.unSelect()
             if(picsToDelete.contains(indexPath)) {
                 cell.select()
             }
             
-            //let photoInfo = collectionImages[indexPath.row]
-            
-            Service.LoadImage(url: photoInfo.getImageUrl()).then { image in
-                dispatch_async(dispatch_get_main_queue(), {
-                    if let cellToUpdate = collectionView.cellForItemAtIndexPath(indexPath) as! PictureCell? {
-                        cellToUpdate.picture!.image = image
-                        cellToUpdate.stopSpinner()
-                    }
-                })
-                }.error{ err in
-                    debugPrint("Error while fetching Image from url: \(err)")
+            // CoreData - checking if image was present in DB
+            if let imageData = photoInfo.image {
+                cell.picture?.image = UIImage(data:imageData)
+            } else {
+                cell.picture?.image = nil
+                cell.startSpinner()
+                
+                Service.LoadImage(url: photoInfo.getImageUrl()).then { image in
+                    dispatch_async(dispatch_get_main_queue(), {
+                        if let imageData = UIImagePNGRepresentation(image) {
+                            photoInfo.image = imageData
+                        }
+                        if let cellToUpdate = collectionView.cellForItemAtIndexPath(indexPath) as! PictureCell? {
+                            cellToUpdate.picture!.image = image
+                            cellToUpdate.stopSpinner()
+                        }
+                    })
+                    }.error{ err in
+                        debugPrint("Error while fetching Image from url: \(err)")
+                }
             }
             
             return cell
@@ -285,7 +295,7 @@ extension CollectionViewController: NSFetchedResultsControllerDelegate {
             )
         case .Delete:
             debugPrint("Delete")
-//            collectionView!.deleteSections(NSIndexSet(index: sectionIndex))
+            //            collectionView!.deleteSections(NSIndexSet(index: sectionIndex))
             
             blockOperations.append(
                 NSBlockOperation(block: { [weak self] in
@@ -299,9 +309,9 @@ extension CollectionViewController: NSFetchedResultsControllerDelegate {
             //tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
         case .Update:
             debugPrint("Update")
-//            let cell = tableView.cellForRowAtIndexPath(indexPath!) as! ActorTableViewCell
-//            let movie = self.fetchedResultsController.objectAtIndexPath(indexPath!) as! Movie
-//            configureCell(cell, movie: movie)
+            //            let cell = tableView.cellForRowAtIndexPath(indexPath!) as! ActorTableViewCell
+            //            let movie = self.fetchedResultsController.objectAtIndexPath(indexPath!) as! Movie
+            //            configureCell(cell, movie: movie)
         }
         
     }

@@ -17,6 +17,7 @@ class Photo: NSManagedObject {
     @NSManaged var secret: String
     @NSManaged var title: String
     @NSManaged var owner: String
+    @NSManaged var image: NSData?
     
     // Core Data - relational property
     @NSManaged var pin: Pin?
