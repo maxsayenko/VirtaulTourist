@@ -1,5 +1,5 @@
 //
-//  PhotoInfo.swift
+//  Photo.swift
 //  VirtualTourist
 //
 //  Created by Max Saienko on 7/8/16.
@@ -8,16 +8,29 @@
 
 import Foundation
 import SwiftyJSON
+import CoreData
 
-struct PhotoInfo {
-    var farmId: Int?
-    var id: String = ""
-    var serverId: String = ""
-    var secret: String = ""
-    var title: String = ""
-    var owner: String = ""
+class Photo: NSManagedObject {
+    @NSManaged var farmId: NSNumber?
+    @NSManaged var id: String
+    @NSManaged var serverId: String
+    @NSManaged var secret: String
+    @NSManaged var title: String
+    @NSManaged var owner: String
+    @NSManaged var image: NSData?
     
-    init?(imageJsonData: JSON) {
+    // Core Data - relational property
+    @NSManaged var pin: Pin?
+    
+    override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
+        super.init(entity: entity, insertIntoManagedObjectContext: context)
+    }
+
+    init?(imageJsonData: JSON, context: NSManagedObjectContext) {
+        // Core Data
+        let entity =  NSEntityDescription.entityForName("Photo", inManagedObjectContext: context)!
+        super.init(entity: entity, insertIntoManagedObjectContext: context)
+        
         guard (imageJsonData.error == nil) else {
             return nil
         }
@@ -29,19 +42,19 @@ struct PhotoInfo {
         if let id = imageJsonData["id"].string {
             self.id = id
         }
-
+        
         if let serverId = imageJsonData["server"].string {
             self.serverId = serverId
         }
-
+        
         if let secret = imageJsonData["secret"].string {
             self.secret = secret
         }
-
+        
         if let title = imageJsonData["title"].string {
             self.title = title
         }
-
+        
         if let owner = imageJsonData["owner"].string {
             self.owner = owner
         }

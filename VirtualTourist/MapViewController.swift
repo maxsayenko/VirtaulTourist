@@ -8,14 +8,36 @@
 
 import MapKit
 import UIKit
+import CoreData
 
 class MapViewController: UIViewController {
+    // Core Data - Convenience methods
+    lazy var sharedContext: NSManagedObjectContext =  {
+        return CoreDataStackManager.sharedInstance().managedObjectContext
+    }()
+    
+    func saveContext() {
+        CoreDataStackManager.sharedInstance().saveContext()
+    }
+
+    var pins = [Pin]()
+    
     @IBOutlet var map: MKMapView!
     
     override func viewDidLoad() {
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: "addAnnotation:")
         map.addGestureRecognizer(longPressGesture)
         map.delegate = self
+        
+        // CoreData - fetching pins
+        let fetchRequest = NSFetchRequest(entityName: "Pin")
+        do {
+            pins = try sharedContext.executeFetchRequest(fetchRequest) as! [Pin]
+        } catch let error as NSError {
+            debugPrint("MapView Fetch failed: \(error.localizedDescription)")
+        }
+        
+        map.addAnnotations(pins.map({$0.annotation}))
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -29,46 +51,26 @@ class MapViewController: UIViewController {
         navigationItem.title = "OK"
     }
     
+    // Save the pin
     func addAnnotation(gestureRecognizer:UIGestureRecognizer) {
         if (gestureRecognizer.state == UIGestureRecognizerState.Began) {
             let touchPoint = gestureRecognizer.locationInView(map)
             let newCoordinates = map.convertPoint(touchPoint, toCoordinateFromView: map)
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = newCoordinates
-            map.addAnnotation(annotation)
-
-            
-//            CLGeocoder().reverseGeocodeLocation(CLLocation(latitude: newCoordinates.latitude, longitude: newCoordinates.longitude), completionHandler: {(placemarks, error) -> Void in
-//                if error != nil {
-//                    print("Reverse geocoder failed with error" + error!.localizedDescription)
-//                    return
-//                }
-//                
-//                if(placemarks!.count > 0) {
-//                    let pm = placemarks![0] 
-//                    
-//                    // not all places have thoroughfare & subThoroughfare so validate those values
-//                    annotation.title = "\(pm.thoroughfare), \(pm.subThoroughfare)"
-//                    annotation.subtitle = pm.subLocality
-//                    //self.map.showAnnotations([annotation], animated: true)
-//                    self.map.addAnnotation(annotation)
-//                    print(pm)
-//                }
-//                else {
-//                    annotation.title = "Unknown Place"
-//                    self.map.addAnnotation(annotation)
-//                    print("Problem with the data received from geocoder")
-//                }
-////                places.append(["name":annotation.title,"latitude":"\(newCoordinates.latitude)","longitude":"\(newCoordinates.longitude)"])
-//            })
+            // CoreData - Saving new pin
+            let pin = Pin(coordinates: newCoordinates, insertIntoManagedObjectContext: sharedContext)
+            debugPrint("saving Pin for coordinates: \(newCoordinates)")
+            saveContext()
+            map.addAnnotation(pin.annotation)
+            pins.append(pin)
         }
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if (segue.identifier == "collectionSegue")
         {
+            let pin = sender as! Pin
             if let ctrl = segue.destinationViewController as? CollectionViewController {
-                ctrl.mapPinAnnotation = sender as? MKAnnotation
+                ctrl.pin = pin
             }
         }
     }
@@ -101,7 +103,12 @@ extension MapViewController: MKMapViewDelegate {
     
     //Selecting annotation
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-        performSegueWithIdentifier("collectionSegue", sender: view.annotation)
+        if let annotation = view.annotation {
+            let index = pins.indexOf({ (pin:Pin) -> Bool in
+                return pin.lat == String(annotation.coordinate.latitude) && pin.long == String(annotation.coordinate.longitude)
+            })
+            performSegueWithIdentifier("collectionSegue", sender: pins[index!])
+        }
     }
 }
 
