@@ -14,7 +14,7 @@ class Pin: NSManagedObject {
     @NSManaged var lat: String
     @NSManaged var long: String
     // Core Data - relational property
-    @NSManaged var photos: [Photo]
+    @NSManaged var photos: NSOrderedSet
     
     override init(entity: NSEntityDescription, insertIntoManagedObjectContext context: NSManagedObjectContext?) {
         super.init(entity: entity, insertIntoManagedObjectContext: context)

@@ -78,7 +78,7 @@ class CollectionViewController: UIViewController {
             
             fetchedResultsController.delegate = self
             
-            if(pin.photos.isEmpty) {
+            if(pin.photos.count == 0) {
                 debugPrint("No images associated with this Pin. Will download and assign")
                 FlickrService.GetImages(pin.annotation).then { result -> Void in
                     self.receiveNewImages(result.pagesCount, photoInfos: result.photoInfos)
@@ -136,13 +136,8 @@ class CollectionViewController: UIViewController {
         if (photoInfos.isEmpty) {
             self.messageLbl.hidden = false
         }
-        
-        for photoInfo in photoInfos {
-            photoInfo.pin = pin
-        }
-        
-        //pin.photos = result.photoInfos
-        //self.pin?.photos = NSSet(array: result.photoInfos)
+                
+        pin?.photos = NSOrderedSet(array: photoInfos)
         
         // CoreData - Save the context
         self.saveContext()
