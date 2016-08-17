@@ -257,6 +257,10 @@ extension CollectionViewController: NSFetchedResultsControllerDelegate {
     }
     
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+        if(collection.window == nil) {
+            return
+        }
+        
         switch type {
         case .Insert:
             blockOperations.append(
@@ -287,6 +291,10 @@ extension CollectionViewController: NSFetchedResultsControllerDelegate {
     }
     
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        if (collection.window == nil) {
+            return;
+        }
+        
         collection!.performBatchUpdates({ () -> Void in
             for operation: NSBlockOperation in self.blockOperations {
                 operation.start()
