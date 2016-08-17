@@ -51,8 +51,6 @@ class CollectionViewController: UIViewController {
     @IBOutlet var deleteBtn: UIButton!
     
     override func viewDidLoad() {
-        debugPrint("View did load")
-
         // UI logic
         self.messageLbl.hidden = true
         self.newCollectionBtn.enabled = true
@@ -64,12 +62,12 @@ class CollectionViewController: UIViewController {
         layout.itemSize = CGSizeMake(width, width)
         
         if let pin = pin {
+            
             // Dropping pin on a small map
             map.addAnnotation(pin.annotation)
             let span = MKCoordinateSpanMake(0.075, 0.075)
             let region = MKCoordinateRegion(center: pin.annotation.coordinate, span: span)
             map.setRegion(region, animated: true)
-            print(pin.annotation.coordinate)
             
             // CoreData - Perform the FETCH and assign fetchedResultsController's delegate
             do {
@@ -79,7 +77,6 @@ class CollectionViewController: UIViewController {
             }
             
             fetchedResultsController.delegate = self
-            debugPrint("fetched objects count = \(fetchedResultsController.fetchedObjects?.count)")
             
             if(pin.photos.isEmpty) {
                 debugPrint("No images associated with this Pin. Will download and assign")
@@ -93,7 +90,7 @@ class CollectionViewController: UIViewController {
     }
     
     @IBAction func newCollectionTouch(sender: UIButton) {
-        debugPrint("New Collection")
+        debugPrint("New Collection. Current page = \(currentPageIndex)")
         if let pagesCount = totalPagesForThisCollection {
             guard currentPageIndex < pagesCount else {
                 debugPrint("No more pages. Total Pages count = \(totalPagesForThisCollection). Current page = \(currentPageIndex)")
@@ -122,7 +119,6 @@ class CollectionViewController: UIViewController {
         }
         picsToDelete.removeAll()
         updateButtonsVisibility()
-                debugPrint("!!!!!! fetched objects count = \(fetchedResultsController.fetchedObjects?.count)")
         // CoreData - saving the deleted images. Also it will allow us to clean up the all pins once new collection is requested
         saveContext()
     }
@@ -131,8 +127,8 @@ class CollectionViewController: UIViewController {
         self.totalPagesForThisCollection = pagesCount
         debugPrint("total pages = \(self.totalPagesForThisCollection)")
         
-        // Handling 0 or 1 page
-        if (self.totalPagesForThisCollection < 2) {
+        // Handling 0 or 1 page OR when on the last page
+        if (self.totalPagesForThisCollection < 2) || (self.totalPagesForThisCollection == currentPageIndex) {
             self.newCollectionBtn.enabled = false
         }
         
@@ -194,8 +190,6 @@ extension CollectionViewController: UICollectionViewDelegate, UICollectionViewDa
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let sectionInfo = fetchedResultsController.sections![section]
-        debugPrint("number of sections = \(fetchedResultsController.sections?.count)")
-        debugPrint("number of objects = \(sectionInfo.numberOfObjects)")
         return sectionInfo.numberOfObjects ?? 0
     }
     
@@ -256,49 +250,27 @@ extension CollectionViewController: UICollectionViewDelegate, UICollectionViewDa
 
 
 
-
 // MARK: FetchedResultsController
 extension CollectionViewController: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
-        print("ControllerWillChangeContent")
         blockOperations.removeAll(keepCapacity: false)
-        //tableView.beginUpdates()
     }
-    
-//    func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
-//        debugPrint("=================      didChangeSection \(type)")
-//        switch type {
-//        case .Insert:
-//            debugPrint("INSERT")
-//            //tableView.insertSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
-//            
-//        case .Delete:
-//            debugPrint("Delete")
-//            //tableView.deleteSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Fade)
-//            
-//        default:
-//            return
-//        }
-//    }
     
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         switch type {
         case .Insert:
-            debugPrint("INSERT")
             blockOperations.append(
                 NSBlockOperation(block: { [weak self] in
                     self!.collection!.insertItemsAtIndexPaths([newIndexPath!])
                     })
             )
         case .Delete:
-            debugPrint("Delete")
             blockOperations.append(
                 NSBlockOperation(block: { [weak self] in
                     self!.collection.deleteItemsAtIndexPaths([indexPath!])
                     })
             )
         case .Move:
-            debugPrint("Move")
             blockOperations.append(
                 NSBlockOperation(block: { [weak self] in
                     self!.collection.moveItemAtIndexPath(indexPath!, toIndexPath: newIndexPath!)
