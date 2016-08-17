@@ -18,7 +18,7 @@ class CollectionViewController: UIViewController {
     var collectionImages:[Photo] = []
     var picsToDelete:Set<NSIndexPath> = Set<NSIndexPath>()
     var currentPageIndex = 1
-    var totalPagesForThisCollection: Int = 0
+    var totalPagesForThisCollection: Int?
     
     var blockOperations: [NSBlockOperation] = []
     
@@ -52,22 +52,18 @@ class CollectionViewController: UIViewController {
     @IBOutlet var deleteBtn: UIButton!
     
     @IBAction func newCollectionTouch(sender: UIButton) {
-        self.collectionImages = []
-        self.collection.reloadData()
+        if let pagesCount = totalPagesForThisCollection {
+            guard currentPageIndex < pagesCount else {
+                debugPrint("No more pages. Total Pages count = \(totalPagesForThisCollection). Current page = \(currentPageIndex)")
+                return
+            }
+        }
         
         if let pin = pin {
-            map.addAnnotation(pin.annotation)
-            let span = MKCoordinateSpanMake(0.075, 0.075)
-            let region = MKCoordinateRegion(center: pin.annotation.coordinate, span: span)
-            map.setRegion(region, animated: true)
-            print(pin.annotation.coordinate)
-            
             FlickrService.GetImages(pin.annotation, page: ++currentPageIndex).then { result -> Void in
-                self.collectionImages = result.photoInfos
-                self.collection.reloadData()
+                self.receiveNewImages(result.pagesCount, photoInfos: result.photoInfos)
                 }.error { error in
-                    debugPrint("Error while fetching photos data: \(error)")
-                    debugPrint(error)
+                    debugPrint("Error while fetching new collection photos data: \(error)")
             }
         }
     }
@@ -85,6 +81,38 @@ class CollectionViewController: UIViewController {
         picsToDelete.removeAll()
         
         updateButtonsVisibility()
+    }
+    
+    func receiveNewImages(pagesCount: Int, photoInfos: [Photo]) {
+        self.totalPagesForThisCollection = pagesCount
+        debugPrint("total pages = \(self.totalPagesForThisCollection)")
+        
+        // Handling 0 or 1 page
+        if (self.totalPagesForThisCollection < 2) {
+            self.newCollectionBtn.enabled = false
+        }
+        
+        // Handling 0 images scenario
+        if (photoInfos.isEmpty) {
+            self.messageLbl.hidden = false
+        }
+        
+        //self.collectionImages = result.photoInfos
+        
+        for photoInfo in photoInfos {
+            photoInfo.pin = pin
+        }
+        
+        //pin.photos = result.photoInfos
+        //self.pin?.photos = NSSet(array: result.photoInfos)
+        
+        // CoreData - Save the context
+        self.saveContext()
+        
+        // Update the collection on the main thread
+        dispatch_async(dispatch_get_main_queue()) {
+            self.collection.reloadData()
+        }
     }
     
     override func viewDidLoad() {
@@ -118,42 +146,10 @@ class CollectionViewController: UIViewController {
             if(pin.photos.isEmpty) {
                 debugPrint("No images associated with this Pin. Will download and assign")
                 FlickrService.GetImages(pin.annotation).then { result -> Void in
-                    self.totalPagesForThisCollection = result.pagesCount
-                    debugPrint("total pages = \(self.totalPagesForThisCollection)")
-                    
-                    // Handling 0 or 1 page
-                    if (self.totalPagesForThisCollection < 2) {
-                        self.newCollectionBtn.enabled = false
-                    }
-                    
-                    // Handling 0 images scenario
-                    if (result.photoInfos.isEmpty) {
-                        self.messageLbl.hidden = false
-                    }
-                    
-                    //self.collectionImages = result.photoInfos
-                    
-                    for photoInfo in result.photoInfos {
-                        photoInfo.pin = pin
-                    }
-                    
-                    //pin.photos = result.photoInfos
-                    //self.pin?.photos = NSSet(array: result.photoInfos)
-                    
-                    // CoreData - Save the context
-                    self.saveContext()
-                    
-                    // Update the collection on the main thread
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.collection.reloadData()
-                    }
-                    
+                    self.receiveNewImages(result.pagesCount, photoInfos: result.photoInfos)
                     }.error { error in
                         debugPrint("Error while fetching photos data: \(error)")
                 }
-            } else {
-                //                collectionImages = pin.photos
-                //                self.collection.reloadData()
             }
         }
     }
